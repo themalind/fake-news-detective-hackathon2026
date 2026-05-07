@@ -5,7 +5,7 @@ import "./PlayerDashboard.scss";
 
 const RANKS = [
   { name: "Junior Skeptiker", min: 0, max: 499 },
-  { name: "Källsniffare", min: 500, max: 1199 },
+  { name: "Källspanare", min: 500, max: 1199 },
   { name: "Rubrikjägare", min: 1200, max: 2499 },
   { name: "Desinformationsdetektiv", min: 2500, max: 4499 },
   { name: "Chefdetektiv", min: 4500, max: 7499 },
