@@ -12,7 +12,7 @@ export default function StartPage({ onStart }: StartPageProps) {
   const hintRef = useMagnify<HTMLParagraphElement>();
 
   return (
-    <>
+    <div className="start-layout">
       <Header isHomePage />
       <main className="start-page">
         <img
@@ -40,6 +40,6 @@ export default function StartPage({ onStart }: StartPageProps) {
           Kan du avslöja falska nyheter innan de sprids?
         </p>
       </main>
-    </>
+    </div>
   );
 }

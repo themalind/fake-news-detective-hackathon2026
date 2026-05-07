@@ -77,14 +77,22 @@ function useArticleContent(): Record<string, ArticleContent> {
 
 // ---------- Sub-components ----------
 
+const stampConfig = {
+  true: { text: "SANT", modifier: "true" },
+  false: { text: "FALSKT", modifier: "false" },
+  misleading: { text: "VILSELEDANDE", modifier: "misleading" },
+};
+
 function CaseCard({
   currentCase,
   article,
   onImageSearch,
+  selectedClassification,
 }: {
   currentCase: Case;
   article?: ArticleContent;
   onImageSearch?: () => void;
+  selectedClassification?: string | null;
 }) {
   const source = article?.source || currentCase.source;
   const headline = article?.headline || currentCase.headline;
@@ -114,6 +122,14 @@ function CaseCard({
           />
         </g>
       </svg>
+      {selectedClassification && stampConfig[selectedClassification as keyof typeof stampConfig] && (
+        <div
+          className={`case-card__stamp case-card__stamp--${stampConfig[selectedClassification as keyof typeof stampConfig].modifier}`}
+          aria-hidden="true"
+        >
+          {stampConfig[selectedClassification as keyof typeof stampConfig].text}
+        </div>
+      )}
       <article className="case-card">
         <div className="case-card__url-bar">
           <span className="case-card__url-text">{source}</span>
@@ -761,7 +777,7 @@ export default function GamePage() {
         onPrevious={() => dispatch({ type: "PREV_CASE" })}
         onNext={() => dispatch({ type: "NEXT_CASE" })}
         isPrevDisabled={state.currentCaseIndex === 0}
-        isNextDisabled={state.phase !== "feedback"}
+        isNextDisabled={state.currentCaseIndex >= CASES.length - 1}
       />
 
       <div className="game-page__body">
@@ -778,6 +794,7 @@ export default function GamePage() {
                   ? () => setShowImageAnalysis(true)
                   : undefined
               }
+              selectedClassification={state.selectedClassification}
             />
           </BrowserFrame>
 

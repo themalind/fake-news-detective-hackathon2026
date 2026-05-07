@@ -4,11 +4,15 @@ import { load } from "../utils/storage";
 import "./PlayerDashboard.scss";
 
 const RANKS = [
-  { name: "Junior Skeptiker", min: 0, max: 199 },
-  { name: "Källsniffare", min: 200, max: 399 },
-  { name: "Rubrikjägare", min: 400, max: 599 },
-  { name: "Desinformationsdetektiv", min: 600, max: 799 },
-  { name: "Chefdetektiv", min: 800, max: 1200 },
+  { name: "Junior Skeptiker", min: 0, max: 499 },
+  { name: "Källsniffare", min: 500, max: 1199 },
+  { name: "Rubrikjägare", min: 1200, max: 2499 },
+  { name: "Desinformationsdetektiv", min: 2500, max: 4499 },
+  { name: "Chefdetektiv", min: 4500, max: 7499 },
+  { name: "Elitdetektiv", min: 7500, max: 11999 },
+  { name: "Mästerspion", min: 12000, max: 19999 },
+  { name: "Sanningens väktare", min: 20000, max: 29999 },
+  { name: "Legendär Faktagranskare", min: 30000, max: Infinity },
 ];
 
 const BADGES = [
@@ -29,9 +33,13 @@ function getRank(score: number) {
 function getRankProgress(score: number) {
   const { rank, index } = getRank(score);
   if (index === RANKS.length - 1) return 100;
-  const progress = score - rank.min;
-  const range = rank.max - rank.min + 1;
-  return Math.min(100, Math.round((progress / range) * 100));
+  return Math.min(100, Math.round((score / (rank.max + 1)) * 100));
+}
+
+function getRankXpLabel(score: number) {
+  const { rank, index } = getRank(score);
+  if (index === RANKS.length - 1) return `${score} erfarenhet`;
+  return `${score} / ${rank.max + 1} erfarenhet`;
 }
 
 const DEFAULT_STATS: PlayerStats = {
@@ -42,7 +50,7 @@ const DEFAULT_STATS: PlayerStats = {
   bestStreak: 3,
   lastStreak: 2,
   totalScore: 450,
-  badges: ["forsta-fallet", "streakjagaren", "bevissamlaren", "skarpskytten", "veteranen"],
+  badges: ["forsta-fallet", "streakjagaren"],
 };
 
 export default function PlayerDashboard() {
@@ -50,6 +58,7 @@ export default function PlayerDashboard() {
   const stats = saved.totalGames === 0 ? DEFAULT_STATS : saved;
   const { rank } = getRank(stats.totalScore);
   const rankProgress = getRankProgress(stats.totalScore);
+  const rankXpLabel = getRankXpLabel(stats.totalScore);
   const hasPlayed = stats.totalGames > 0;
   const accuracy = hasPlayed ? Math.round((stats.totalCorrect / (stats.totalGames * CASES.length)) * 100) : null;
 
@@ -75,7 +84,9 @@ export default function PlayerDashboard() {
 
       <div className="player-dashboard__top">
         <div className="player-dashboard__profile">
-          <div className="player-dashboard__avatar">🕵️</div>
+          <div className="player-dashboard__avatar">
+            <img src="/images/StylingElements/detective-lady.png" alt="" aria-hidden="true" className="player-dashboard__avatar-img" />
+          </div>
           <div className="player-dashboard__rank-info">
             <span className="player-dashboard__rank-name">{rank.name}</span>
             <div
@@ -87,7 +98,7 @@ export default function PlayerDashboard() {
             >
               <div className="player-dashboard__rank-bar-fill" style={{ width: `${rankProgress}%` }} />
             </div>
-            <span className="player-dashboard__rank-score">{stats.totalScore} poäng</span>
+            <span className="player-dashboard__rank-score">{rankXpLabel}</span>
           </div>
         </div>
 

@@ -55,13 +55,11 @@ export default function Header({
         {showGameNavigation && (
           <nav className="header__nav" aria-label="Fallnavigering">
             <button
-              className="header__arrow"
+              className="header__arrow header__arrow--prev"
               onClick={onPrevious}
               disabled={isPrevDisabled}
               aria-label="Föregående fall"
-            >
-              ‹
-            </button>
+            />
             <div className="header__dots" aria-hidden="true">
               {Array.from({ length: totalCases }, (_, i) => (
                 <span
@@ -77,12 +75,11 @@ export default function Header({
               ))}
             </div>
             <button
-              className="header__arrow"
+              className="header__arrow header__arrow--next"
               onClick={onNext}
               disabled={isNextDisabled}
               aria-label="Nästa fall"
             >
-              ›
             </button>
           </nav>
         )}

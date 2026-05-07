@@ -4,18 +4,26 @@ import Header from '../components/Header'
 import './SummaryPage.scss'
 
 function getRank(score: number): string {
-  if (score >= 800) return 'Chefdetektiv av Nope'
-  if (score >= 600) return 'Desinformationsdetektiv'
-  if (score >= 400) return 'Rubrikjägare'
-  if (score >= 200) return 'Källsniffare'
+  if (score >= 30000) return 'Legendär Faktagranskare'
+  if (score >= 20000) return 'Sanningens väktare'
+  if (score >= 12000) return 'Mästerspion'
+  if (score >= 7500) return 'Elitdetektiv'
+  if (score >= 4500) return 'Chefdetektiv'
+  if (score >= 2500) return 'Desinformationsdetektiv'
+  if (score >= 1200) return 'Rubrikjägare'
+  if (score >= 500) return 'Källsniffare'
   return 'Junior Skeptiker'
 }
 
 function getRankBadge(score: number): string {
-  if (score >= 800) return '★★★'
-  if (score >= 600) return '★★☆'
-  if (score >= 400) return '★☆☆'
-  if (score >= 200) return '◈◈◇'
+  if (score >= 30000) return '👑'
+  if (score >= 20000) return '✦✦✦'
+  if (score >= 12000) return '✦✦★'
+  if (score >= 7500) return '✦★★'
+  if (score >= 4500) return '★★★'
+  if (score >= 2500) return '★★☆'
+  if (score >= 1200) return '★☆☆'
+  if (score >= 500) return '◈◈◇'
   return '◈◇◇'
 }
 
