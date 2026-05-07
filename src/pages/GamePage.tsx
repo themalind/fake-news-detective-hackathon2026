@@ -10,6 +10,7 @@ import type {
   RoundResult,
 } from "../types/game";
 import Header from "../components/Header";
+import { Lock, Search, Star } from "lucide-react";
 import "./GamePage.scss";
 
 interface ArticleContent {
@@ -132,7 +133,6 @@ function CaseCard({
       <article className="case-card">
         <div className="case-card__url-bar">
           <span className="case-card__url-text">{source}</span>
-          <span className="case-card__url-flag">&#9873; Misstänkt källa</span>
         </div>
         <div className="case-card__body">
           <h2 className="case-card__headline">{headline}</h2>
@@ -156,7 +156,8 @@ function CaseCard({
                   onClick={onImageSearch}
                   aria-label="Granska bilden med omvänd bildsökning"
                 >
-                  🔍 Granska
+                  <Search size={14} strokeWidth={2.25} />
+                  Granska
                 </button>
               )}
             </div>
@@ -417,39 +418,109 @@ function BrowserFrame({
   onInspectUrl: () => void;
   children: React.ReactNode;
 }) {
+  const [showLockInfo, setShowLockInfo] = useState(false);
+
   return (
     <div className="browser-frame">
       <div className="browser-frame__url-bar">
         <div className="browser-frame__address" title={source}>
-          <span className="browser-frame__lock" aria-hidden="true">
-            🔒
-          </span>
+          <button
+            type="button"
+            className="browser-frame__lock"
+            onClick={() => setShowLockInfo((v) => !v)}
+            aria-label="Visa anslutningsinformation"
+            aria-expanded={showLockInfo}
+          >
+            <Lock size={12} strokeWidth={2.25} />
+          </button>
           <span className="browser-frame__url">{source}</span>
           <span
             className="browser-frame__address-icon"
             aria-hidden="true"
             title="Sök på sidan"
           >
-            🔍
+            <Search size={14} strokeWidth={2} />
           </span>
           <span
             className="browser-frame__address-icon"
             aria-hidden="true"
             title="Spara som bokmärke"
           >
-            ☆
+            <Star size={14} strokeWidth={2} />
           </span>
         </div>
-        <button
-          type="button"
-          className="browser-frame__inspect"
-          onClick={onInspectUrl}
-          aria-label="Granska URL — vad man ska titta efter"
-        >
-          ⚑ Granska URL
-        </button>
+        {showLockInfo && (
+          <LockInfoPopover
+            source={source}
+            onClose={() => setShowLockInfo(false)}
+            onInspectUrl={() => {
+              setShowLockInfo(false);
+              onInspectUrl();
+            }}
+          />
+        )}
       </div>
       <div className="browser-frame__body">{children}</div>
+    </div>
+  );
+}
+
+function LockInfoPopover({
+  source,
+  onClose,
+  onInspectUrl,
+}: {
+  source: string;
+  onClose: () => void;
+  onInspectUrl: () => void;
+}) {
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (
+        target.closest(".lock-popover") ||
+        target.closest(".browser-frame__lock")
+      ) {
+        return;
+      }
+      onClose();
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="lock-popover" role="dialog" aria-label="Anslutning">
+      <div className="lock-popover__header">
+        <Lock size={16} strokeWidth={2.25} />
+        <span className="lock-popover__title">Anslutningen är krypterad</span>
+      </div>
+      <p className="lock-popover__lead">
+        Sajten använder HTTPS — ingen kan avlyssna det du skickar. Men
+        krypterad ≠ trovärdig.
+      </p>
+      <div className="lock-popover__url-row">
+        <span className="lock-popover__url-label">Adress</span>
+        <span className="lock-popover__url">{source}</span>
+      </div>
+      <p className="lock-popover__warning">
+        Hänglåset säger inget om vem som äger sajten. Kontrollera domänen
+        själv — bedragare har också HTTPS.
+      </p>
+      <button
+        type="button"
+        className="lock-popover__cta"
+        onClick={onInspectUrl}
+      >
+        Fler tips på url-granskning →
+      </button>
     </div>
   );
 }
@@ -457,7 +528,7 @@ function BrowserFrame({
 function HintCard({ hint }: { hint: { title: string; body: string } }) {
   return (
     <aside className="hint-card" aria-label="Detektivtips">
-      <div className="hint-card__badge">🔎 Detektivtips</div>
+      <div className="hint-card__badge">Detektivtips</div>
       <h3 className="hint-card__title">{hint.title}</h3>
       <p className="hint-card__body">{hint.body}</p>
       <p className="hint-card__footer">
