@@ -64,29 +64,48 @@ export default function SummaryPage() {
         </div>
 
         <div className="summary-page__cases">
-          {results.map((result, i) => {
-            const c = CASES[i]
-            return (
-              <div
-                key={result.caseId}
-                className={`summary-case ${result.isCorrect ? 'summary-case--correct' : 'summary-case--wrong'}`}
-              >
-                <span className="summary-case__icon">{result.isCorrect ? '✓' : '✗'}</span>
-                <span className="summary-case__headline">{c.headline}</span>
-                <span className="summary-case__score">
-                  {result.scoreGained >= 0 ? '+' : ''}{result.scoreGained} XP
-                </span>
-              </div>
-            )
-          })}
+          <div className="summary-page__cases-col">
+            <h3 className="summary-page__cases-heading summary-page__cases-heading--correct">Lösta fall</h3>
+            {results.filter((r) => r.isCorrect).map((result) => {
+              const c = CASES.find((cas) => cas.id === result.caseId)
+              return (
+                <div key={result.caseId} className="summary-case summary-case--correct">
+                  <span className="summary-case__icon">✓</span>
+                  <span className="summary-case__headline">{c?.headline}</span>
+                  <span className="summary-case__score">+{result.scoreGained} XP</span>
+                </div>
+              )
+            })}
+          </div>
+          <div className="summary-page__cases-col">
+            <h3 className="summary-page__cases-heading summary-page__cases-heading--wrong">Missade fall</h3>
+            {results.filter((r) => !r.isCorrect).map((result) => {
+              const c = CASES.find((cas) => cas.id === result.caseId)
+              return (
+                <div key={result.caseId} className="summary-case summary-case--wrong">
+                  <span className="summary-case__icon">✗</span>
+                  <span className="summary-case__headline">{c?.headline}</span>
+                  <span className="summary-case__score">{result.scoreGained} XP</span>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
-        <button
-          className="summary-page__restart"
-          onClick={() => dispatch({ type: 'RESTART' })}
-        >
-          UTRED IGEN
-        </button>
+        <div className="summary-page__actions">
+          <button
+            className="summary-page__restart"
+            onClick={() => dispatch({ type: 'RESTART' })}
+          >
+            UTRED IGEN
+          </button>
+          <button
+            className="summary-page__dashboard"
+            onClick={() => dispatch({ type: 'RESTART' })}
+          >
+            TILL DASHBOARD
+          </button>
+        </div>
       </div>
     </main>
     </>
