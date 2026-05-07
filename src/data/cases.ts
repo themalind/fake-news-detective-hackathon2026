@@ -25,6 +25,7 @@ export const CASES: Case[] = [
       'Det här är ett falskt hälsopåstående. Artikeln gör ett mycket stort medicinskt löfte utan spårbara källor, metod eller trovärdig bekräftelse.',
     consequence:
       'Om den delas kan människor skjuta upp eller avstå från riktig vård.',
+    image: 'choclate-cancer.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -52,6 +53,7 @@ export const CASES: Case[] = [
       'Bilden verkar vara äkta, men sammanhanget är fel. Att använda en riktig bild från en annan plats och tid är en vanlig desinformationsteknik.',
     consequence:
       'Om den delas kan den skapa onödig oro och försvaga förtroendet för riktiga krisvarningar.',
+    image: 'flooding-germany.png',
     imageAnalysis: {
       matchFound: true,
       originalLocation: 'Tyskland',
@@ -83,6 +85,7 @@ export const CASES: Case[] = [
       'Studien finns, men artikeln överdriver vad den visar. Ett litet, sponsrat underlag kan inte bära en så stark slutsats.',
     consequence:
       'Missvisande hälsopåståenden kan få människor att fatta sämre beslut om kost, sömn och studier.',
+    image: 'energy-drinks.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -110,6 +113,7 @@ export const CASES: Case[] = [
       'Kärnan är delvis sann: skolan har en ny mobilregel. Men rubriken gör beslutet mycket mer extremt än det är.',
     consequence:
       'Om den delas kan elever och föräldrar reagera på en förvrängd version av skolans regler.',
+    image: 'leave-mobile.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -137,6 +141,7 @@ export const CASES: Case[] = [
       'Det här verkar vara en AI-genererad eller manipulerad bild. Bildfel och total avsaknad av trovärdig bekräftelse är starka varningssignaler.',
     consequence:
       'Falska gripandebilder kan skada rykten och leda till trakasserier mot verkliga personer.',
+    image: 'celebrity-caught.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -165,6 +170,7 @@ export const CASES: Case[] = [
       'Det här är en falsk artikel som använder en förvillande URL och låtsas vara en etablerad nyhetskälla. Ett sådant beslut skulle ha tydliga officiella källor.',
     consequence:
       'Om den delas kan den skapa oro och misstro kring myndigheter och medier.',
+    image: 'ban-late-surf.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -192,6 +198,7 @@ export const CASES: Case[] = [
       'Artikeln bygger på en verklig observation, men rubriken och statistiken är missvisande. Ett smalt urval presenteras som en generell kris.',
     consequence:
       'Missvisande statistik kan göra att människor får en felaktig bild av ekonomin och fattar beslut på dåliga underlag.',
+    image: 'expensive-food.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -219,6 +226,7 @@ export const CASES: Case[] = [
       'Det här är en trovärdig artikel. Den är avgränsad, länkar till kontrollerbara uppgifter och drar inte större slutsatser än underlaget stödjer.',
     consequence:
       'Trovärdiga artiklar hjälper människor att förstå lokala beslut utan onödig dramatik.',
+    image: 'cool-bus-stop.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -246,6 +254,7 @@ export const CASES: Case[] = [
       'Det här är falskt som säkerhetspåstående. Produkten kan finnas, men artikeln använder falsk auktoritet och absoluta löften utan bevis.',
     consequence:
       'Om människor tror på överdrivna säkerhetslöften kan de underskatta riktiga risker.',
+    image: 'professor-alarm.png',
     imageAnalysis: {
       matchFound: false
     },
@@ -273,6 +282,7 @@ export const CASES: Case[] = [
       'Det här är en trovärdig lokal nyhet. Den är specifik, kontrollerbar och använder en rubrik som stämmer med innehållet.',
     consequence:
       'När saklig information delas kan fler ta del av service och beslut som faktiskt påverkar vardagen.',
+    image: 'library-open-late.png',
     imageAnalysis: {
       matchFound: false
     },
