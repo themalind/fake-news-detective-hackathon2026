@@ -676,7 +676,7 @@ export default function GamePage() {
         onPrevious={() => dispatch({ type: "PREV_CASE" })}
         onNext={() => dispatch({ type: "NEXT_CASE" })}
         isPrevDisabled={state.currentCaseIndex === 0}
-        isNextDisabled={state.phase !== "feedback"}
+        isNextDisabled={state.currentCaseIndex >= CASES.length - 1}
       />
 
       <div className="game-page__body">

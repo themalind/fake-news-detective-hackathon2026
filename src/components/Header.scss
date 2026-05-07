@@ -10,9 +10,27 @@
   justify-content: space-between;
   gap: 1rem;
 
-  padding: 0.35rem 1.5rem;
+  padding: 0 0.5rem;
+  position: relative;
 
-  background: $color-card-bg;
+  background:
+    repeating-linear-gradient(
+      112deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(255, 230, 160, 0.013) 2px,
+      rgba(255, 230, 160, 0.013) 4px
+    ),
+    repeating-linear-gradient(
+      -65deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(0, 0, 0, 0.055) 4px,
+      rgba(0, 0, 0, 0.055) 9px
+    ),
+    radial-gradient(ellipse at 18% 12%, rgba(115, 70, 12, 0.24) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 88%, rgba(55, 28, 4, 0.2) 0%, transparent 50%),
+    $color-card-bg;
 
   border-bottom: 1px solid rgba(201, 162, 39, 0.25);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
@@ -22,12 +40,14 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .header__logo-img {
   height: 92px;
   width: auto;
   display: block;
+  margin-top: -12px;
 
   filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.65))
     drop-shadow(0 0 12px rgba(201, 162, 39, 0.18));
@@ -58,6 +78,10 @@
 }
 
 .header__nav {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -65,26 +89,37 @@
 
 .header__arrow {
   all: unset;
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  font-size: 1.75rem;
-  font-weight: 900;
-  color: $color-primary;
+  align-self: center;
+  width: 44px;
+  height: 44px;
   border-radius: $radius-sm;
-  transition:
-    opacity 0.15s,
-    background 0.15s,
-    color 0.15s;
-  line-height: 1;
-  text-shadow: 0 0 8px rgba(201, 162, 39, 0.35);
+  transition: opacity 0.15s, background 0.15s;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-top: 2.5px solid $color-primary;
+    border-right: 2.5px solid $color-primary;
+    filter: drop-shadow(0 0 4px rgba(201, 162, 39, 0.5));
+  }
+
+  &--prev::before {
+    transform: rotate(-135deg) translateY(-2px);
+  }
+
+  &--next::before {
+    transform: rotate(45deg) translateY(-2px);
+  }
 
   &:hover:not(:disabled) {
     background: $color-primary-dim;
-    color: $color-primary-hover;
   }
 
   &:focus-visible {
@@ -95,7 +130,6 @@
   &:disabled {
     opacity: 0.2;
     cursor: default;
-    text-shadow: none;
   }
 }
 
@@ -103,6 +137,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  align-self: center;
 }
 
 .header__dot {
