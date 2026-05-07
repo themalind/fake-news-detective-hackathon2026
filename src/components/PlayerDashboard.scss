@@ -149,7 +149,7 @@
     gap: 0;
     padding-bottom: 1rem;
 
-    @media (max-width: 520px) {
+    @media (max-width: 644px) {
       flex-direction: column;
     }
   }
@@ -162,7 +162,7 @@
     padding-right: 1.5rem;
     flex-shrink: 0;
 
-    @media (max-width: 520px) {
+    @media (max-width: 644px) {
       padding-right: 0;
       padding-bottom: 1rem;
     }
@@ -256,7 +256,7 @@
     gap: 0.6rem;
     align-content: center;
 
-    @media (max-width: 520px) {
+    @media (max-width: 644px) {
       border-left: none;
       box-shadow: none;
       @include brass-divider;

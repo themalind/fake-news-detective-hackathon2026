@@ -129,9 +129,6 @@ export default function PlayerDashboard() {
               />
             </div>
             <span className="player-dashboard__rank-score">{rankXpLabel}</span>
-            <span className="player-dashboard__rank-score">
-              {stats.totalScore} poäng
-            </span>
           </div>
         </div>
 
