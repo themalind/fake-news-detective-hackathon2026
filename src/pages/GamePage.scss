@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../styles/variables" as *;
 
 // ---------- Page shell ----------
@@ -33,12 +34,6 @@
 .case-card-wrap {
   position: relative;
   background-color: $color-paper-bg;  // underlay bakom case-card för snällare övergång mellan bakgrund och avriven effekt
-  transform: rotate(-0.4deg);
-  transition: transform 0.25s ease;
-
-  &:hover {
-    transform: rotate(-0.05deg);
-  }
 }
 
 .case-card__tear-overlay {
@@ -260,7 +255,8 @@
     gap: 0.5rem;
     padding: 0.55rem 1.1rem;
     min-height: 44px;
-    background: darken($color-paper-bg, 5%);  // 5% mörkare ton än bg-färgen
+    // background: darken($color-paper-bg, 5%);  
+    background: color.adjust($color-paper-bg, $lightness: -5%); // 5% mörkare ton än bg-färgen
     border: 1.5px solid rgba(122, 92, 16, 0.5);
     border-radius: 2px;
     color: #5e4710;
