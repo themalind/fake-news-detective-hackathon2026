@@ -42,7 +42,7 @@ const DEFAULT_STATS: PlayerStats = {
   bestStreak: 3,
   lastStreak: 2,
   totalScore: 450,
-  badges: ["forsta-fallet", "streakjagaren", "bevissamlaren", "skarpskytten", "veteranen"],
+  badges: ["forsta-fallet", "streakjagaren"],
 };
 
 export default function PlayerDashboard() {
