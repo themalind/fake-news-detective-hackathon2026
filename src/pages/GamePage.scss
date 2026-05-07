@@ -9,6 +9,14 @@
   flex-direction: column;
   background-color: $color-bg;
 
+  // Desktop: lås sidan till viewport-höjd så endast vänsterkolumnen scrollar.
+  // overflow: hidden ligger här (inte på body) så body inte klipper t.ex.
+  // browser-frame:s box-shadow på smalare skärmar.
+  @media (min-width: 901px) {
+    height: 100vh;
+    overflow: hidden;
+  }
+
   &__case-label {
     font-size: 0.75rem;
     font-weight: 700;
@@ -26,6 +34,11 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
+    @media (min-width: 901px) {
+      min-height: 0;
+      padding-bottom: 1.5rem;
+    }
   }
 }
 
@@ -41,7 +54,7 @@
   top: 5rem;
   left: 50%;
   transform: translateX(-50%) rotate(8deg);
-  z-index: 10;
+  z-index: 1;  // håller sig under URL-bar och header om visuell clip skulle missa
   pointer-events: none;
 
   font-family: "Impact", "Arial Narrow", sans-serif;
@@ -423,6 +436,13 @@
   border-radius: $radius;
   padding: 1rem;
   animation: slideDown 0.25s ease-out;
+  // Mobile: page-scroll, header behöver kompenseras
+  scroll-margin-top: calc(92px + 1.5rem);
+
+  @media (min-width: 901px) {
+    // Desktop: scrollar internt i main-kolumnen, ingen header att kompensera för
+    scroll-margin-top: 0;
+  }
 
   &__header {
     display: flex;
@@ -1050,9 +1070,29 @@
   grid-template-columns: minmax(0, 1fr) clamp(280px, 28%, 360px);
   align-items: start;
 
-  // Under 900px stackas sidopanelen under artikeln
+  // Desktop: grid fyller hela body-höjden, kolumnerna sträckta
+  @media (min-width: 901px) {
+    height: 100%;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  // Under 900px stackas allt i en kolumn med ordningen:
+  // browser-frame → klassi-knappar → bevis-sektion → hint.
+  // display: contents gör att main/sidebar inte är egna lager — deras barn
+  // blir direkta grid-children och kan ordnas individuellt med `order`.
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
+
+    > .game-page__main,
+    > .game-page__sidebar {
+      display: contents;
+    }
+
+    .browser-frame   { order: 1; }
+    .classify-panel  { order: 2; }
+    .evidence-panel  { order: 3; }
+    .hint-card       { order: 4; }
   }
 }
 
@@ -1061,6 +1101,24 @@
   flex-direction: column;
   gap: 1.25rem;
   min-width: 0;  // tillåter att grid-kolumnen krymper i stället för att artikeln spränger ut
+
+  // Desktop: scrollar internt när evidence-panel dyker upp.
+  // Innan klassificering ryms browser-frame exakt — ingen scrollbar.
+  @media (min-width: 901px) {
+    min-height: 0;
+    overflow-y: auto;
+
+    // Mörk scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: #3a3020 transparent;
+    &::-webkit-scrollbar { width: 10px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb {
+      background: #3a3020;
+      border-radius: 999px;
+      &:hover { background: #5a4a32; }
+    }
+  }
 }
 
 .game-page__sidebar {
@@ -1068,10 +1126,11 @@
   flex-direction: column;
   gap: 1rem;
 
-  // Sticky sidopanel på desktop så den följer med när artikeln är lång
+  // Desktop: fyller grid-cellen, inget scroll på sidopanelen.
+  // Klassi-knappar + hint får alltid plats inom viewport-höjd minus header.
   @media (min-width: 901px) {
-    position: sticky;
-    top: 5rem;
+    height: 100%;
+    min-height: 0;
   }
 }
 
@@ -1084,6 +1143,15 @@
   border-radius: 8px;
   background: #15120c;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  overflow: hidden;  // hårt clip — stämpel/skugga kan inte fly ut ur ramen
+
+  // Desktop: browser-fönstret är viewport-högt och scrollar med sidan.
+  // Artikeln scrollar internt inuti body:n så länge browser-fönstret är i view.
+  // När användaren scrollar ner till bevis-sektionen åker frame:n ur view —
+  // den kommer tillbaka när man scrollar upp igen.
+  @media (min-width: 901px) {
+    height: calc(100vh - 92px - 3rem);
+  }
 
   &__url-bar {
     position: relative;  // ankare för lock-popover
@@ -1168,12 +1236,40 @@
     }
   }
 
-  // Artikeln sitter "innanför" browserfönstret med padding runtom
+  // Artikeln sitter "innanför" browserfönstret med padding runtom.
+  // flex:1 + min-height:0 + overflow:auto låter den växa till tillgänglig
+  // höjd och scrolla internt om artikeln är högre än body:n.
+  // position: relative skapar en lokal stacking + clipping-context så
+  // absolut-positionerade barn (t.ex. stämpeln) inte flyr utanför body:n.
   &__body {
+    flex: 1;
+    min-height: 0;
     padding: clamp(1rem, 3vw, 1.75rem);
-    background: #15120c;  // mörk webbläsarbakgrund bakom papperet
+    background: #15120c;
     border-radius: 0 0 8px 8px;
-    overflow: hidden;  // klipper artikelns inre vid rundade hörn
+    overflow: auto;
+    position: relative;
+
+    // Mörkt tema på scrollbaren — Firefox + WebKit
+    scrollbar-width: thin;
+    scrollbar-color: #3a3020 transparent;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 4px 0;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #3a3020;
+      border-radius: 999px;
+      border: 2px solid #15120c;  // skapar luft runt thumb mot mörk bg
+
+      &:hover {
+        background: #5a4a32;
+      }
+    }
   }
 }
 
