@@ -67,7 +67,6 @@ export default function SummaryPage() {
           className="summary-page__wall-light summary-page__wall-light--right"
         />
         <div className="summary-page__card">
-          <div className="summary-page__badge">{badge}</div>
           <h1 className="summary-page__rank">{rank}</h1>
           <p className="summary-page__score">{score} XP</p>
 
