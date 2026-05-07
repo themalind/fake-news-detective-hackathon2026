@@ -1,0 +1,1075 @@
+@use "../styles/variables" as *;
+
+// ---------- Page shell ----------
+
+.game-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-bg;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: $color-bg-alt;
+    border-bottom: 1px solid $color-card-border;
+    gap: 1rem;
+  }
+
+  &__case-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: $color-primary;
+    white-space: nowrap;
+  }
+
+  &__progress {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-card-border;
+    transition: background 0.2s;
+
+    &--done {
+      background: $color-primary;
+      opacity: 0.5;
+    }
+
+    &--active {
+      background: $color-primary;
+      box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__score {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  &__streak {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $color-text;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: $radius-sm;
+    padding: 0.2rem 0.6rem;
+  }
+
+  &__body {
+    flex: 1;
+    max-width: $max-width;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+// ---------- Case card ----------
+
+.case-card-wrap {
+  position: relative;
+  background-color: $color-paper-bg;  // underlay bakom case-card för snällare övergång mellan bakgrund och avriven effekt
+  transform: rotate(-0.4deg);
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: rotate(-0.05deg);
+  }
+}
+
+.case-card__tear-overlay {
+  position: absolute;
+  top: 0;
+  left: -5.75rem;
+  height: 100%;
+  width: 200px;  
+  pointer-events: none;
+}
+
+.case-card {
+  position: relative;
+  isolation: isolate;  // bg-bild stannar bakom innehåll
+  overflow: hidden;    // klipper kaffe-fläck-bilden utanför kortet
+  background-color: transparent;
+  color: $color-paper-text;
+  border-radius: 0;
+
+  // Bg-gradient gör bakgrunden transparent på vänstra 10 px och solid pappers-färg 
+  // för att den avrivna effekten skall bli snyggare
+  background-image: linear-gradient(
+    to right,
+    transparent 0,
+    $color-paper-bg 10px,
+    $color-paper-bg 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: 0 0;
+
+  // Kaffe-fläck nere till höger
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: -7rem;
+    right: -9rem;
+    width: 30rem;
+    height: 30rem;
+    background-image: url("/images/StylingElements/marks-coffee-cup-several-thin-removebg-preview.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  // kaffe-fläck nere till vänster
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -4rem;
+    left: 2rem;
+    width: 5rem;
+    height: 10rem;
+    background-image: url("/images/StylingElements/hand-painted-watercolor-background-removebg-preview.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: rotate(30deg);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  // ingen skugga till vänster pga avrivet-papper-effekten
+  box-shadow:
+    2px 1px 1px rgba(0, 0, 0, 0.25),
+    18px 10px 18px rgba(0, 0, 0, 0.45);
+
+  // Masthead (omstilad ex-URL-bar)
+  &__url-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1.25rem 0.55rem;
+    background: transparent;
+    font-family: Georgia, "Times New Roman", serif;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 1rem;
+      right: 1rem;
+      border-bottom: 3px double #b8a47a;
+    }
+
+    // Smala skärmar: stämpeln överst, källan på rad under
+    @media (max-width: 400px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  &__url-text {
+    flex: 1;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $color-paper-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // "Misstänkt källa" som lutande röd stämpel
+  &__url-flag {
+    font-family: "Courier New", "Courier", monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: $color-false;
+    background: rgba(153, 27, 27, 0.08);
+    border: 1.5px solid $color-false;
+    padding: 0.18rem 0.55rem;
+    transform: rotate(5deg);
+    white-space: nowrap;
+    box-shadow: inset 0 0 0 1px rgba(153, 27, 27, 0.3);
+
+    // På smala skärmar: hamna överst i kolumnen och högerställd
+    @media (max-width: 400px) {
+      order: -1;
+      align-self: flex-end;
+    }
+  }
+
+  &__body {
+    position: relative;
+    z-index: 5;  // över kaffefläckarna (z:-1)
+    padding: 1rem;  // extra botten pga riv-kanten
+
+    // Mer luft på sidorna på större skärmar
+    @media (min-width: 600px) {
+      padding: 1rem 2rem;
+    }
+  }
+
+  &__headline {
+    font-size: clamp(1.3rem, 4vw, 1.85rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+    font-family: Georgia, "Times New Roman", serif;
+    color: $color-paper-text;
+    text-transform: uppercase;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.78rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    color: $color-paper-muted;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #c4b290;
+  }
+
+  &__article-image {
+    display: block;
+    float: left;
+    max-width: 40%;
+    height: auto;
+    margin: 0 1.5rem 1rem 0;
+    border: 1px solid #c4b290;
+
+    // bild får full bredd på smala skärmar
+    @media (max-width: 480px) {
+      float: none;
+      max-width: 100%;
+      width: 100%;
+      margin: 0 0 1rem;
+    }
+  }
+
+  &__content {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: $color-paper-text;
+    margin: 0 0 0.5rem;
+    font-family: Georgia, "Times New Roman", serif;
+    text-align: justify;
+    hyphens: auto;
+
+    // STOR första bokstav på första stycket
+    &:first-of-type::first-letter {
+      float: left;
+      font-size: 3rem;
+      line-height: 1;
+      font-weight: 900;
+      padding: 0 0.25rem 0 0;
+      color: $color-paper-text;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+  }
+
+  &__image-tool {
+    position: relative;
+    z-index: 100;
+    clear: both;  // "omvänd bildsök"-knapp placeras alltid under artikelns innehåll (bild+text)
+    display: flex;
+    justify-content: center;
+    padding: 0.85rem 0 0;
+    margin-top: 0.5rem;
+    border-top: 3px double #b8a47a;
+  }
+
+  &__image-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    min-height: 44px;
+    background: darken($color-paper-bg, 5%);  // 5% mörkare ton än bg-färgen
+    border: 1.5px solid rgba(122, 92, 16, 0.5);
+    border-radius: 2px;
+    color: #5e4710;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+
+    &:hover {
+      background: rgba(201, 162, 39, 0.22);
+      border-color: rgba(122, 92, 16, 0.8);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ---------- Classification ----------
+
+.classify-panel {
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: $color-text-muted;
+    margin: 0 0 0.75rem;
+  }
+
+  &__buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.classify-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: $radius;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.1s,
+    box-shadow 0.15s;
+  background: $color-card-bg;
+  color: $color-text;
+
+  &__icon {
+    font-size: 1.1rem;
+    font-weight: 900;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  // True
+  &--true {
+    border: 2px solid $color-true;
+
+    &:not(:disabled):hover {
+      background: $color-true-light;
+      transform: translateY(-2px);
+    }
+
+    &.classify-btn--selected {
+      background: $color-true;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(22, 101, 52, 0.4);
+    }
+  }
+
+  // False
+  &--false {
+    border: 2px solid $color-false;
+
+    &:not(:disabled):hover {
+      background: $color-false-light;
+      transform: translateY(-2px);
+    }
+
+    &.classify-btn--selected {
+      background: $color-false;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(153, 27, 27, 0.4);
+    }
+  }
+
+  // Misleading
+  &--misleading {
+    border: 2px solid $color-misleading;
+
+    &:not(:disabled):hover {
+      background: $color-misleading-light;
+      transform: translateY(-2px);
+    }
+
+    &.classify-btn--selected {
+      background: $color-misleading;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(180, 83, 9, 0.4);
+    }
+  }
+}
+
+// ---------- Evidence panel ----------
+
+.evidence-panel {
+  background: $color-card-bg;
+  border: 1px solid $color-card-border;
+  border-radius: $radius;
+  padding: 1.25rem;
+  animation: slideDown 0.25s ease-out;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: $color-primary;
+  }
+
+  &__sub {
+    font-size: 0.75rem;
+    color: $color-text-muted;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__selected-count {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+  }
+
+  &__submit {
+    padding: 0.75rem 1.75rem;
+    background: $color-primary;
+    color: $color-button-text;
+    border: none;
+    border-radius: $radius;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      transform 0.1s,
+      box-shadow 0.15s;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(201, 162, 39, 0.35);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.clue-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid $color-card-border;
+  border-radius: $radius-sm;
+  background: $color-bg-alt;
+  color: $color-text-muted;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
+
+  &__check {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: $color-text-muted;
+    width: 1em;
+    transition: color 0.15s;
+  }
+
+  &:hover {
+    border-color: $color-primary;
+    color: $color-text;
+
+    .clue-chip__check {
+      color: $color-primary;
+    }
+  }
+
+  &--selected {
+    border-color: $color-primary;
+    background: $color-primary-dim;
+    color: $color-text;
+
+    .clue-chip__check {
+      color: $color-primary;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// ---------- Feedback overlay ----------
+
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 4, 0.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
+
+  @media (min-width: 600px) {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  &__card {
+    background: $color-card-bg;
+    border: 1px solid $color-card-border;
+    border-radius: $radius-lg $radius-lg 0 0;
+    padding: clamp(1rem, 4vw, 1.5rem);
+    width: 100%;
+    max-width: 560px;
+    max-height: 100dvh;
+    overflow: hidden;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    @media (min-width: 600px) {
+      border-radius: $radius-lg;
+      max-height: calc(100dvh - 2rem);
+    }
+
+    > * {
+      flex-shrink: 0;
+    }
+  }
+
+  &__verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: $radius;
+    font-size: 0.88rem;
+    line-height: 1.4;
+
+    &--correct {
+      background: $color-success-bg;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: $color-success;
+    }
+
+    &--wrong {
+      background: $color-danger-bg;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: $color-danger;
+    }
+  }
+
+  &__verdict-icon {
+    font-size: 1.25rem;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  &__correct-label {
+    display: block;
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    margin-top: 0.15rem;
+  }
+
+  &__explanation {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: $color-text;
+    margin: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $color-card-border;
+  }
+
+  &__score-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__score-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: $color-text-muted;
+
+    .positive {
+      color: $color-success;
+      font-weight: 700;
+    }
+    .negative {
+      color: $color-danger;
+      font-weight: 700;
+    }
+
+    &.feedback-overlay__score-total {
+      margin-top: 0.3rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid $color-card-border;
+      font-weight: 700;
+      color: $color-primary;
+      font-size: 0.88rem;
+    }
+  }
+
+  &__consequence {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    background: rgba(180, 83, 9, 0.08);
+    border: 1px solid rgba(180, 83, 9, 0.25);
+    border-radius: $radius-sm;
+    padding: 0.6rem 0.7rem;
+    line-height: 1.45;
+  }
+
+  &__consequence-icon {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    color: $color-misleading;
+  }
+
+  &__next-btn {
+    padding: 0.7rem 0.85rem;
+    min-height: 44px;
+    background: $color-primary;
+    color: $color-button-text;
+    border: none;
+    border-radius: $radius;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      transform 0.1s;
+    width: 100%;
+
+    &:hover {
+      background: $color-primary-hover;
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ---------- Clue review (i feedback overlay) ----------
+
+.clue-review {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-height: 4rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid $color-card-border;
+  overflow: hidden;
+
+  &__header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: $color-primary;
+    flex-shrink: 0;
+  }
+
+  &__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-right: 0.25rem;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $color-card-border;
+      border-radius: 3px;
+    }
+  }
+}
+
+.clue-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-radius: $radius-sm;
+  padding: 0.5rem 0.6rem;
+
+  &--correct {
+    background: $color-success-bg;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  &--wrong {
+    background: $color-danger-bg;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  &--missed {
+    background: rgba(180, 83, 9, 0.08);
+    border: 1px dashed rgba(180, 83, 9, 0.35);
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    .clue-group--correct & {
+      color: $color-success;
+    }
+    .clue-group--wrong & {
+      color: $color-danger;
+    }
+    .clue-group--missed & {
+      color: $color-misleading;
+    }
+  }
+
+  &__icon {
+    font-weight: 900;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  &__count {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem;
+    align-items: baseline;
+    padding: 0.3rem 0;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: $color-text;
+
+    & + & {
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  &__text {
+    word-wrap: break-word;
+    min-width: 0;
+  }
+
+  &__points {
+    font-weight: 800;
+    font-size: 0.78rem;
+    white-space: nowrap;
+
+    .clue-group--correct & {
+      color: $color-success;
+    }
+    .clue-group--wrong & {
+      color: $color-danger;
+    }
+    .clue-group--missed & {
+      color: $color-text-muted;
+    }
+  }
+}
+
+// ---------- Animations ----------
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ---------- Omvänd bildsökning-modal ----------
+
+.image-analysis-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 4, 0.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 110;
+  animation: fadeIn 0.2s ease-out;
+
+  @media (min-width: 600px) {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  &__card {
+    background: $color-card-bg;
+    border: 1px solid $color-card-border;
+    border-radius: $radius-lg $radius-lg 0 0;
+    padding: clamp(1rem, 4vw, 1.5rem);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90dvh;
+    overflow-y: auto;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    @media (min-width: 600px) {
+      border-radius: $radius-lg;
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $color-card-border;
+  }
+
+  &__title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: $color-primary;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 1rem;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: color 0.15s;
+
+    &:hover {
+      color: $color-text;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  &__match {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: $radius;
+    font-weight: 700;
+    font-size: 0.88rem;
+
+    &--found {
+      background: rgba(180, 83, 9, 0.1);
+      border: 1px solid rgba(180, 83, 9, 0.35);
+      color: $color-misleading;
+    }
+
+    &--clear {
+      background: $color-success-bg;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: $color-success;
+    }
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $color-card-border;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  &__label {
+    color: $color-text-muted;
+  }
+
+  &__value {
+    color: $color-text;
+    font-weight: 600;
+  }
+
+  &__close-btn {
+    padding: 0.7rem 0.85rem;
+    min-height: 44px;
+    background: transparent;
+    color: $color-text-muted;
+    border: 1px solid $color-card-border;
+    border-radius: $radius;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+    width: 100%;
+
+    &:hover {
+      color: $color-text;
+      border-color: $color-text-muted;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
