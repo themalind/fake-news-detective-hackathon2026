@@ -12,6 +12,9 @@ export default function StartPage({ onStart }: StartPageProps) {
 
   return (
     <main className="start-page">
+      <img src="/images/wallLight.png" alt="" aria-hidden="true" className="start-page__wall-light start-page__wall-light--left" />
+      <img src="/images/wallLight.png" alt="" aria-hidden="true" className="start-page__wall-light start-page__wall-light--right" />
+
       <p className="start-page__tagline">Granska fakta. Ifrågasätt allt. Avslöja sanningen.</p>
 
       <div ref={dashboardRef}>
