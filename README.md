@@ -47,25 +47,18 @@ Projektet utvecklas som en React-webbapplikation.
 - HTML5
 - CSS3
 
-### Möjliga tillägg
-
-- React Router
-- Context API eller Redux
-- Firebase eller annan databaslösning
-- API för artiklar eller AI-genererat innehåll
-
 ## Installation
 
 Klona projektet:
 
 ```bash
-git clone <repository-url>
+git clone fake-news-detective-hackathon2026
 ```
 
 Gå till projektmappen:
 
 ```bash
-cd kallkritiksspelet
+cd fake-news-detective-hackathon2026
 ```
 
 Installera dependencies:
