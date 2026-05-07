@@ -1,7 +1,8 @@
-@use '../styles/variables' as *;
+@use "../styles/variables" as *;
 
 @keyframes candleflicker {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       0 0 0 1px rgba(201, 162, 39, 0.2),
       0 16px 60px rgba(0, 0, 0, 0.8),
@@ -55,13 +56,21 @@
       rgba(0, 0, 0, 0.055) 4px,
       rgba(0, 0, 0, 0.055) 9px
     ),
-    radial-gradient(ellipse at 18% 12%, rgba(115, 70, 12, 0.24) 0%, transparent 52%),
-    radial-gradient(ellipse at 82% 88%, rgba(55, 28, 4, 0.2) 0%, transparent 50%),
+    radial-gradient(
+      ellipse at 18% 12%,
+      rgba(115, 70, 12, 0.24) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 82% 88%,
+      rgba(55, 28, 4, 0.2) 0%,
+      transparent 50%
+    ),
     $color-card-bg;
 
   // Inner decorative frame
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 9px;
     border: 1px solid rgba(201, 162, 39, 0.11);
@@ -80,10 +89,22 @@
     pointer-events: none;
     z-index: 2;
 
-    &--tl { top: 5px; left: 8px; }
-    &--tr { top: 5px; right: 8px; }
-    &--bl { bottom: 5px; left: 8px; }
-    &--br { bottom: 5px; right: 8px; }
+    &--tl {
+      top: 5px;
+      left: 8px;
+    }
+    &--tr {
+      top: 5px;
+      right: 8px;
+    }
+    &--bl {
+      bottom: 5px;
+      left: 8px;
+    }
+    &--br {
+      bottom: 5px;
+      right: 8px;
+    }
   }
 
   // Lift all direct content above the inner frame pseudo-element
@@ -101,7 +122,7 @@
   }
 
   &__dossier-label {
-    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
     font-size: 0.55rem;
     font-weight: 700;
     letter-spacing: 0.32em;
@@ -152,7 +173,11 @@
     height: 72px;
     min-width: 72px;
     border-radius: 50%;
-    background: radial-gradient(circle at 38% 35%, rgba(201, 162, 39, 0.18) 0%, rgba(16, 14, 9, 1) 72%);
+    background: radial-gradient(
+      circle at 38% 35%,
+      rgba(201, 162, 39, 0.18) 0%,
+      rgba(16, 14, 9, 1) 72%
+    );
     border: 2px solid rgba(201, 162, 39, 0.42);
     box-shadow:
       0 0 18px rgba(201, 162, 39, 0.16),
@@ -181,7 +206,7 @@
   }
 
   &__rank-name {
-    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
     font-size: 1.2rem;
     font-weight: 700;
     color: $color-primary;
@@ -202,7 +227,12 @@
 
   &__rank-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #6b4407, $color-primary, $color-primary-hover);
+    background: linear-gradient(
+      90deg,
+      #6b4407,
+      $color-primary,
+      $color-primary-hover
+    );
     border-radius: 4px;
     transition: width 0.6s ease;
     min-width: 2px;
@@ -241,7 +271,11 @@
     padding: 0.75rem 0.4rem;
     border-radius: $radius-sm;
     background:
-      radial-gradient(ellipse at 50% 0%, rgba(201, 162, 39, 0.07) 0%, transparent 70%),
+      radial-gradient(
+        ellipse at 50% 0%,
+        rgba(201, 162, 39, 0.07) 0%,
+        transparent 70%
+      ),
       rgba(0, 0, 0, 0.28);
     border: 1px solid rgba(201, 162, 39, 0.12);
   }
@@ -254,8 +288,17 @@
     line-height: 1;
   }
 
+  &__stat-icon {
+    height: 1.4em;
+    width: 1.4em;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
+    filter: brightness(1.6);
+  }
+
   &__stat-value {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: "Playfair Display", Georgia, serif;
     font-size: clamp(1.3rem, 3vw, 1.6rem);
     font-weight: 700;
     color: $color-text;
@@ -305,7 +348,7 @@
   }
 
   &__inv-value {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: "Playfair Display", Georgia, serif;
     font-size: clamp(1.1rem, 2.8vw, 1.4rem);
     font-weight: 700;
     color: $color-text;
@@ -331,7 +374,7 @@
   }
 
   &__badges-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: "Playfair Display", Georgia, serif;
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.22em;
@@ -361,7 +404,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 38% 32%, rgba(60, 30, 5, 0.9), rgba(28, 14, 2, 1));
+    background: radial-gradient(
+      circle at 38% 32%,
+      rgba(60, 30, 5, 0.9),
+      rgba(28, 14, 2, 1)
+    );
     border: 2px solid rgba(120, 60, 15, 0.4);
     box-shadow:
       inset 0 2px 5px rgba(255, 180, 80, 0.08),
@@ -369,13 +416,21 @@
       0 4px 10px rgba(0, 0, 0, 0.7);
     filter: grayscale(1);
     opacity: 0.28;
-    transition: filter 0.3s, opacity 0.3s, box-shadow 0.3s, border-color 0.3s;
+    transition:
+      filter 0.3s,
+      opacity 0.3s,
+      box-shadow 0.3s,
+      border-color 0.3s;
   }
 
   &__badge--earned &__badge-seal {
     filter: none;
     opacity: 1;
-    background: radial-gradient(circle at 38% 32%, rgba(190, 110, 20, 1), rgba(110, 55, 8, 1));
+    background: radial-gradient(
+      circle at 38% 32%,
+      rgba(190, 110, 20, 1),
+      rgba(110, 55, 8, 1)
+    );
     border-color: rgba(201, 162, 39, 0.65);
     box-shadow:
       inset 0 2px 5px rgba(255, 200, 100, 0.22),
@@ -384,10 +439,12 @@
       0 0 20px rgba(160, 90, 10, 0.35);
   }
 
-  &__badge-emoji {
-    font-size: 1.6rem;
-    line-height: 1;
+  &__badge-img {
+    width: 2.2rem;
+    height: 2.2rem;
+    object-fit: contain;
     display: block;
+    filter: brightness(1.5);
   }
 
   &__badge-label {
@@ -400,7 +457,7 @@
 
   &__new-player {
     margin: 0.5rem 0 0;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: "Playfair Display", Georgia, serif;
     font-size: 0.9rem;
     color: $color-text-muted;
     text-align: center;

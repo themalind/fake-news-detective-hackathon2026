@@ -16,11 +16,11 @@ const RANKS = [
 ];
 
 const BADGES = [
-  { id: "forsta-fallet", label: "Första fallet", emoji: "🔍" },
-  { id: "streakjagaren", label: "Streakjägaren", emoji: "⚡" },
-  { id: "bevissamlaren", label: "Bevissamlaren", emoji: "🗂️" },
-  { id: "skarpskytten", label: "Skarpskytten", emoji: "🎯" },
-  { id: "veteranen", label: "Veteran", emoji: "🏅" },
+  { id: "forsta-fallet", label: "Första fallet", image: "/images/StylingElements/fire1.png"},
+  { id: "streakjagaren", label: "Streakjägaren", image: "/images/StylingElements/lightning.png" },
+  { id: "bevissamlaren", label: "Bevissamlaren", image: "/images/StylingElements/folder.png" },
+  { id: "skarpskytten", label: "Skarpskytten", image: "/images/StylingElements/dartboard.png" },
+  { id: "veteranen", label: "Veteran", image: "/images/StylingElements/star.png" },
 ];
 
 function getRank(score: number) {
@@ -50,7 +50,13 @@ const DEFAULT_STATS: PlayerStats = {
   bestStreak: 3,
   lastStreak: 2,
   totalScore: 450,
-  badges: ["forsta-fallet", "streakjagaren"],
+  badges: [
+    "forsta-fallet",
+    "streakjagaren",
+    "bevissamlaren",
+    "skarpskytten",
+    "veteranen",
+  ],
 };
 
 export default function PlayerDashboard() {
@@ -60,32 +66,53 @@ export default function PlayerDashboard() {
   const rankProgress = getRankProgress(stats.totalScore);
   const rankXpLabel = getRankXpLabel(stats.totalScore);
   const hasPlayed = stats.totalGames > 0;
-  const accuracy = hasPlayed ? Math.round((stats.totalCorrect / (stats.totalGames * CASES.length)) * 100) : null;
+  const accuracy = hasPlayed
+    ? Math.round((stats.totalCorrect / (stats.totalGames * CASES.length)) * 100)
+    : null;
 
   return (
     <div className="player-dashboard">
-      <span className="player-dashboard__corner player-dashboard__corner--tl" aria-hidden="true">
+      <span
+        className="player-dashboard__corner player-dashboard__corner--tl"
+        aria-hidden="true"
+      >
         ✦
       </span>
-      <span className="player-dashboard__corner player-dashboard__corner--tr" aria-hidden="true">
+      <span
+        className="player-dashboard__corner player-dashboard__corner--tr"
+        aria-hidden="true"
+      >
         ✦
       </span>
-      <span className="player-dashboard__corner player-dashboard__corner--bl" aria-hidden="true">
+      <span
+        className="player-dashboard__corner player-dashboard__corner--bl"
+        aria-hidden="true"
+      >
         ✦
       </span>
-      <span className="player-dashboard__corner player-dashboard__corner--br" aria-hidden="true">
+      <span
+        className="player-dashboard__corner player-dashboard__corner--br"
+        aria-hidden="true"
+      >
         ✦
       </span>
 
       <div className="player-dashboard__dossier">
-        <span className="player-dashboard__dossier-label">Dossier · Detektiv</span>
+        <span className="player-dashboard__dossier-label">
+          Dossier · Detektiv
+        </span>
         <span className="player-dashboard__dossier-rule" aria-hidden="true" />
       </div>
 
       <div className="player-dashboard__top">
         <div className="player-dashboard__profile">
           <div className="player-dashboard__avatar">
-            <img src="/images/StylingElements/detective-lady.png" alt="" aria-hidden="true" className="player-dashboard__avatar-img" />
+            <img
+              src="/images/StylingElements/detective-lady.png"
+              alt=""
+              aria-hidden="true"
+              className="player-dashboard__avatar-img"
+            />
           </div>
           <div className="player-dashboard__rank-info">
             <span className="player-dashboard__rank-name">{rank.name}</span>
@@ -96,31 +123,58 @@ export default function PlayerDashboard() {
               aria-valuemin={0}
               aria-valuemax={100}
             >
-              <div className="player-dashboard__rank-bar-fill" style={{ width: `${rankProgress}%` }} />
+              <div
+                className="player-dashboard__rank-bar-fill"
+                style={{ width: `${rankProgress}%` }}
+              />
             </div>
             <span className="player-dashboard__rank-score">{rankXpLabel}</span>
+            <span className="player-dashboard__rank-score">
+              {stats.totalScore} poäng
+            </span>
           </div>
         </div>
 
         <div className="player-dashboard__key-stats">
           <div className="player-dashboard__stat">
             <div className="player-dashboard__stat-row">
-              <span aria-hidden="true">🔥</span>
-              <span className="player-dashboard__stat-value">{stats.lastStreak}</span>
+              <img
+                src="/images/StylingElements/fire1.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__stat-value">
+                {stats.lastStreak}
+              </span>
             </div>
             <span className="player-dashboard__stat-label">Streak</span>
           </div>
           <div className="player-dashboard__stat">
             <div className="player-dashboard__stat-row">
-              <span aria-hidden="true">⭐</span>
-              <span className="player-dashboard__stat-value">{stats.bestStreak}</span>
+              <img
+                src="/images/StylingElements/star.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__stat-value">
+                {stats.bestStreak}
+              </span>
             </div>
             <span className="player-dashboard__stat-label">Rekord</span>
           </div>
           <div className="player-dashboard__stat">
             <div className="player-dashboard__stat-row">
-              <span aria-hidden="true">🎯</span>
-              <span className="player-dashboard__stat-value">{accuracy !== null ? `${accuracy}%` : "–"}</span>
+              <img
+                src="/images/StylingElements/dartboard.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__stat-value">
+                {accuracy !== null ? `${accuracy}%` : "–"}
+              </span>
             </div>
             <span className="player-dashboard__stat-label">Träffsäkerhet</span>
           </div>
@@ -131,29 +185,57 @@ export default function PlayerDashboard() {
         <div className="player-dashboard__inv-grid">
           <div className="player-dashboard__inv-item">
             <div className="player-dashboard__inv-row">
-              <span aria-hidden="true">📁</span>
-              <span className="player-dashboard__inv-value">{stats.totalGames}</span>
+              <img
+                src="/images/StylingElements/folder.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__inv-value">
+                {stats.totalGames}
+              </span>
             </div>
             <span className="player-dashboard__inv-label">Utredningar</span>
           </div>
           <div className="player-dashboard__inv-item">
             <div className="player-dashboard__inv-row">
-              <span aria-hidden="true">✅</span>
-              <span className="player-dashboard__inv-value">{stats.totalCorrect}</span>
+              <img
+                src="/images/StylingElements/check.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__inv-value">
+                {stats.totalCorrect}
+              </span>
             </div>
             <span className="player-dashboard__inv-label">Rätt bedömning</span>
           </div>
           <div className="player-dashboard__inv-item">
             <div className="player-dashboard__inv-row">
-              <span aria-hidden="true">🚫</span>
-              <span className="player-dashboard__inv-value">{stats.totalFooled}</span>
+              <img
+                src="/images/StylingElements/stop.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__inv-value">
+                {stats.totalFooled}
+              </span>
             </div>
             <span className="player-dashboard__inv-label">Lurad</span>
           </div>
           <div className="player-dashboard__inv-item">
             <div className="player-dashboard__inv-row">
-              <span aria-hidden="true">🔍</span>
-              <span className="player-dashboard__inv-value">{stats.totalEvidenceFound}</span>
+              <img
+                src="/images/StylingElements/magnifying.png"
+                alt=""
+                aria-hidden="true"
+                className="player-dashboard__stat-icon"
+              />
+              <span className="player-dashboard__inv-value">
+                {stats.totalEvidenceFound}
+              </span>
             </div>
             <span className="player-dashboard__inv-label">Bevis funna</span>
           </div>
@@ -172,16 +254,27 @@ export default function PlayerDashboard() {
                 title={earned ? badge.label : `${badge.label} (låst)`}
               >
                 <div className="player-dashboard__badge-seal">
-                  <span className="player-dashboard__badge-emoji">{badge.emoji}</span>
+                  <img
+                    src={badge.image}
+                    alt=""
+                    aria-hidden="true"
+                    className="player-dashboard__badge-img"
+                  />
                 </div>
-                <span className="player-dashboard__badge-label">{badge.label}</span>
+                <span className="player-dashboard__badge-label">
+                  {badge.label}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {!hasPlayed && <p className="player-dashboard__new-player">Redo för din första utredning, detektiv?</p>}
+      {!hasPlayed && (
+        <p className="player-dashboard__new-player">
+          Redo för din första utredning, detektiv?
+        </p>
+      )}
     </div>
   );
 }
