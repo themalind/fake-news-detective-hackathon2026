@@ -289,8 +289,8 @@
   }
 
   &__stat-icon {
-    height: 1.4em;
-    width: 1.4em;
+    height: 1.1em;
+    width: 1.1em;
     object-fit: contain;
     flex-shrink: 0;
     display: block;
@@ -303,6 +303,7 @@
     font-weight: 700;
     color: $color-text;
     line-height: 1;
+    margin-bottom: 0.5rem;
   }
 
   &__stat-label {
@@ -311,6 +312,7 @@
     letter-spacing: 0.08em;
     text-align: center;
     text-transform: uppercase;
+    margin-bottom: 0.5rem;
   }
 
   // Investigation grid
@@ -349,10 +351,12 @@
 
   &__inv-value {
     font-family: "Playfair Display", Georgia, serif;
-    font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
     font-weight: 700;
     color: $color-text;
     line-height: 1.1;
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   &__inv-label {
