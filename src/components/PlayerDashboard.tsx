@@ -75,7 +75,9 @@ export default function PlayerDashboard() {
 
       <div className="player-dashboard__top">
         <div className="player-dashboard__profile">
-          <div className="player-dashboard__avatar">🕵️</div>
+          <div className="player-dashboard__avatar">
+            <img src="/images/StylingElements/detective-lady.png" alt="" aria-hidden="true" className="player-dashboard__avatar-img" />
+          </div>
           <div className="player-dashboard__rank-info">
             <span className="player-dashboard__rank-name">{rank.name}</span>
             <div
