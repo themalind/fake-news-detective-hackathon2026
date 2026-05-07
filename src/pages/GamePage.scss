@@ -261,13 +261,13 @@
     border-bottom: 1px solid #c4b290;
   }
 
-  &__article-image {
-    display: block;
+  &__image-wrap {
+    position: relative;
     float: left;
     max-width: 40%;
-    height: auto;
     margin: 0 1.5rem 1rem 0;
     border: 1px solid #c4b290;
+    line-height: 0;  // tar bort luft under inline-bilden
 
     // bild får full bredd på smala skärmar
     @media (max-width: 480px) {
@@ -276,6 +276,12 @@
       width: 100%;
       margin: 0 0 1rem;
     }
+  }
+
+  &__article-image {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   &__content {
@@ -299,27 +305,20 @@
     }
   }
 
-  &__image-tool {
-    position: relative;
-    z-index: 100;
-    clear: both;  // "omvänd bildsök"-knapp placeras alltid under artikelns innehåll (bild+text)
-    display: flex;
-    justify-content: center;
-    padding: 0.85rem 0 0;
-    margin-top: 0.5rem;
-    border-top: 3px double #b8a47a;
-  }
-
   &__image-search-btn {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    z-index: 2;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 1.1rem;
-    min-height: 44px;
-    // background: darken($color-paper-bg, 5%);  
-    background: color.adjust($color-paper-bg, $lightness: -5%); // 5% mörkare ton än bg-färgen
-    border: 1.5px solid rgba(122, 92, 16, 0.5);
-    border-radius: 2px;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    // min-height: 44px;
+    line-height: 1;
+    background: rgba(242, 241, 236, 0.92);  // lätt transparent papper-ton för läsbarhet ovanpå bilden
+    border: 1.5px solid rgba(122, 92, 16, 0.6);
+    border-radius: 999px;
     color: #5e4710;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 0.8rem;
@@ -327,18 +326,28 @@
     font-style: italic;
     letter-spacing: 0.06em;
     cursor: pointer;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     transition:
       background 0.15s,
       border-color 0.15s;
 
     &:hover {
-      background: rgba(201, 162, 39, 0.22);
-      border-color: rgba(122, 92, 16, 0.8);
+      background: rgba(201, 162, 39, 0.85);
+      border-color: rgba(122, 92, 16, 0.9);
     }
 
     &:focus-visible {
       outline: 2px solid $color-primary;
       outline-offset: 2px;
+    }
+
+    // På smala skärmar: håll knappen läsbar genom att låta texten brytas vid behov
+    @media (max-width: 480px) {
+      left: 0.4rem;
+      bottom: 0.4rem;
+      font-size: 0.72rem;
+      padding: 0.4rem 0.7rem;
     }
   }
 }

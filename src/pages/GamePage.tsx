@@ -125,28 +125,29 @@ function CaseCard({
             </div>
           )}
           {currentCase.image && (
-            <img
-              className="case-card__article-image"
-              src={`/images/${currentCase.image}`}
-              alt=""
-            />
+            <div className="case-card__image-wrap">
+              <img
+                className="case-card__article-image"
+                src={`/images/${currentCase.image}`}
+                alt=""
+              />
+              {onImageSearch && (
+                <button
+                  type="button"
+                  className="case-card__image-search-btn"
+                  onClick={onImageSearch}
+                  aria-label="Granska bilden med omvänd bildsökning"
+                >
+                  🔍 Granska
+                </button>
+              )}
+            </div>
           )}
           {paragraphs.map((paragraph, index) => (
             <p className="case-card__content" key={index}>
               {paragraph}
             </p>
           ))}
-          {onImageSearch && (
-            <div className="case-card__image-tool">
-              <button
-                className="case-card__image-search-btn"
-                onClick={onImageSearch}
-                aria-label="Öppna omvänd bildsökning"
-              >
-                🔍 Omvänd bildsökning
-              </button>
-            </div>
-          )}
         </div>
       </article>
     </div>
