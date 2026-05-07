@@ -55,18 +55,29 @@ export default function PlayerDashboard() {
 
   return (
     <div className="player-dashboard">
-      <div className="player-dashboard__profile">
-        <div className="player-dashboard__avatar">🕵️</div>
-        <div className="player-dashboard__rank-info">
-          <span className="player-dashboard__rank-name">{rank.name}</span>
-          <div className="player-dashboard__rank-bar" role="progressbar" aria-valuenow={rankProgress} aria-valuemin={0} aria-valuemax={100}>
-            <div className="player-dashboard__rank-bar-fill" style={{ width: `${rankProgress}%` }} />
-          </div>
-          <span className="player-dashboard__rank-score">{stats.totalScore} poäng</span>
-        </div>
+      <span className="player-dashboard__corner player-dashboard__corner--tl" aria-hidden="true">✦</span>
+      <span className="player-dashboard__corner player-dashboard__corner--tr" aria-hidden="true">✦</span>
+      <span className="player-dashboard__corner player-dashboard__corner--bl" aria-hidden="true">✦</span>
+      <span className="player-dashboard__corner player-dashboard__corner--br" aria-hidden="true">✦</span>
+
+      <div className="player-dashboard__dossier">
+        <span className="player-dashboard__dossier-label">Dossier · Detektiv</span>
+        <span className="player-dashboard__dossier-rule" aria-hidden="true" />
       </div>
 
-      <div className="player-dashboard__key-stats">
+      <div className="player-dashboard__top">
+        <div className="player-dashboard__profile">
+          <div className="player-dashboard__avatar">🕵️</div>
+          <div className="player-dashboard__rank-info">
+            <span className="player-dashboard__rank-name">{rank.name}</span>
+            <div className="player-dashboard__rank-bar" role="progressbar" aria-valuenow={rankProgress} aria-valuemin={0} aria-valuemax={100}>
+              <div className="player-dashboard__rank-bar-fill" style={{ width: `${rankProgress}%` }} />
+            </div>
+            <span className="player-dashboard__rank-score">{stats.totalScore} poäng</span>
+          </div>
+        </div>
+
+        <div className="player-dashboard__key-stats">
         <div className="player-dashboard__stat">
           <div className="player-dashboard__stat-row">
             <span aria-hidden="true">🔥</span>
@@ -89,7 +100,7 @@ export default function PlayerDashboard() {
           <span className="player-dashboard__stat-label">Träffsäkerhet</span>
         </div>
       </div>
-
+      </div>
 
       <div className="player-dashboard__investigation">
         <div className="player-dashboard__inv-grid">
@@ -135,7 +146,9 @@ export default function PlayerDashboard() {
                 className={`player-dashboard__badge${earned ? ' player-dashboard__badge--earned' : ''}`}
                 title={earned ? badge.label : `${badge.label} (låst)`}
               >
-                <span className="player-dashboard__badge-emoji">{badge.emoji}</span>
+                <div className="player-dashboard__badge-seal">
+                  <span className="player-dashboard__badge-emoji">{badge.emoji}</span>
+                </div>
                 <span className="player-dashboard__badge-label">{badge.label}</span>
               </div>
             )
