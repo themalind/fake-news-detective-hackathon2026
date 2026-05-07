@@ -7,11 +7,24 @@ import type {
   Classification,
   Clue,
   ImageAnalysis,
+  PlayerStats,
   RoundResult,
 } from "../types/game";
 import Header from "../components/Header";
+import { load } from "../utils/storage";
 import { ArrowRight, Lock, Search, Star } from "lucide-react";
 import "./GamePage.scss";
+
+const DEFAULT_STATS: PlayerStats = {
+  totalGames: 0,
+  totalCorrect: 0,
+  totalFooled: 0,
+  totalEvidenceFound: 0,
+  bestStreak: 0,
+  lastStreak: 0,
+  totalScore: 0,
+  badges: [],
+};
 
 interface ArticleContent {
   caseId: string;
@@ -788,7 +801,7 @@ export default function GamePage() {
         showGameNavigation
         currentCaseIndex={state.currentCaseIndex}
         totalCases={CASES.length}
-        score={state.score}
+        experience={(load("stats", DEFAULT_STATS) as PlayerStats).totalScore + state.score}
         streak={state.streak}
         onLogoClick={() => dispatch({ type: "RESTART" })}
         onPrevious={() => dispatch({ type: "PREV_CASE" })}
