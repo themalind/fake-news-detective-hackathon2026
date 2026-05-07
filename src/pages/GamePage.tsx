@@ -10,7 +10,7 @@ import type {
   RoundResult,
 } from "../types/game";
 import Header from "../components/Header";
-import { Lock, Search, Star } from "lucide-react";
+import { ArrowRight, Lock, Search, Star } from "lucide-react";
 import "./GamePage.scss";
 
 interface ArticleContent {
@@ -269,7 +269,7 @@ function EvidencePanel({
           onClick={onSubmit}
           disabled={selectedClueIds.length === 0}
         >
-          LÄMNA IN FALL &rarr;
+          LÄMNA IN FALL <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       </div>
     </div>
@@ -528,7 +528,7 @@ function LockInfoPopover({
         className="lock-popover__cta"
         onClick={onInspectUrl}
       >
-        Fler tips på url-granskning →
+        Fler tips på url-granskning <ArrowRight size={14} strokeWidth={2.25} />
       </button>
     </div>
   );
@@ -743,7 +743,8 @@ function FeedbackOverlay({
         </div>
 
         <button className="feedback-overlay__next-btn" onClick={onNext}>
-          {isLastCase ? "SE RESULTAT" : "NÄSTA FALL"} &rarr;
+          {isLastCase ? "SE RESULTAT" : "NÄSTA FALL"}{" "}
+          <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       </div>
     </div>
@@ -798,21 +799,37 @@ export default function GamePage() {
 
       <div className="game-page__body">
         <div className="game-page__layout">
-          <BrowserFrame
-            source={currentCase.source}
-            onInspectUrl={() => setShowUrlInspect(true)}
-          >
-            <CaseCard
-              currentCase={currentCase}
-              article={currentArticle}
-              onImageSearch={
-                currentCase.imageAnalysis
-                  ? () => setShowImageAnalysis(true)
-                  : undefined
-              }
-              selectedClassification={state.selectedClassification}
-            />
-          </BrowserFrame>
+          <div className="game-page__main">
+            <BrowserFrame
+              source={currentCase.source}
+              onInspectUrl={() => setShowUrlInspect(true)}
+            >
+              <CaseCard
+                currentCase={currentCase}
+                article={currentArticle}
+                onImageSearch={
+                  currentCase.imageAnalysis
+                    ? () => setShowImageAnalysis(true)
+                    : undefined
+                }
+                selectedClassification={state.selectedClassification}
+              />
+            </BrowserFrame>
+
+            {state.phase === "investigating" && (
+              <EvidencePanel
+                clues={currentCase.clues}
+                positiveClues={currentCase.positiveClues}
+                misleadingClues={currentCase.misleadingClues}
+                classification={state.selectedClassification!}
+                selectedClueIds={state.selectedClueIds}
+                onToggle={(id) =>
+                  dispatch({ type: "TOGGLE_CLUE", clueId: id })
+                }
+                onSubmit={() => dispatch({ type: "SUBMIT_CASE" })}
+              />
+            )}
+          </div>
 
           <aside className="game-page__sidebar">
             <section className="classify-panel">
@@ -857,21 +874,7 @@ export default function GamePage() {
               </div>
             </section>
 
-            {state.phase === "investigating" ? (
-              <EvidencePanel
-                clues={currentCase.clues}
-                positiveClues={currentCase.positiveClues}
-                misleadingClues={currentCase.misleadingClues}
-                classification={state.selectedClassification!}
-                selectedClueIds={state.selectedClueIds}
-                onToggle={(id) =>
-                  dispatch({ type: "TOGGLE_CLUE", clueId: id })
-                }
-                onSubmit={() => dispatch({ type: "SUBMIT_CASE" })}
-              />
-            ) : (
-              <HintCard hint={currentHint} />
-            )}
+            <HintCard hint={currentHint} />
           </aside>
         </div>
       </div>

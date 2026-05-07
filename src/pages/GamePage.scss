@@ -461,6 +461,9 @@
   }
 
   &__submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     padding: 0.75rem 1.75rem;
     background: $color-primary;
     color: $color-button-text;
@@ -682,6 +685,10 @@
   }
 
   &__next-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
     padding: 0.7rem 0.85rem;
     min-height: 44px;
     background: $color-primary;
@@ -1049,6 +1056,13 @@
   }
 }
 
+.game-page__main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;  // tillåter att grid-kolumnen krymper i stället för att artikeln spränger ut
+}
+
 .game-page__sidebar {
   display: flex;
   flex-direction: column;
@@ -1252,6 +1266,10 @@
   }
 
   &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     margin-top: 0.25rem;
     padding: 0.55rem 0.85rem;
     min-height: 40px;

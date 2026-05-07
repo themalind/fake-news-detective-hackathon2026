@@ -243,7 +243,7 @@ export default function PlayerDashboard() {
       </div>
 
       <div className="player-dashboard__badges">
-        <span className="player-dashboard__badges-title">🏆 Märken</span>
+        <span className="player-dashboard__badges-title">Märken</span>
         <div className="player-dashboard__badges-list">
           {BADGES.map((badge) => {
             const earned = stats.badges.includes(badge.id);
