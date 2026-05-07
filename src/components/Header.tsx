@@ -5,7 +5,7 @@ interface HeaderProps {
   showGameNavigation?: boolean;
   currentCaseIndex?: number;
   totalCases?: number;
-  score?: number;
+  experience?: number;
   streak?: number;
   onLogoClick?: () => void;
   onPrevious?: () => void;
@@ -19,7 +19,7 @@ export default function Header({
   showGameNavigation = false,
   currentCaseIndex = 0,
   totalCases = 0,
-  score,
+  experience,
   streak,
   onLogoClick,
   onPrevious,
@@ -37,7 +37,7 @@ export default function Header({
 
   return (
     <>
-      <header className="header">
+      <header className={`header${isHomePage ? " header--home" : ""}`}>
         <div className="header__logo">
           {isHomePage || !onLogoClick ? (
             logo
@@ -84,15 +84,15 @@ export default function Header({
           </nav>
         )}
 
-        {score !== undefined ? (
+        {experience !== undefined ? (
           <div className="header__stats">
-            <span className="header__score">{score} XP</span>
+            <span className="header__score">{experience} XP</span>
             {streak !== undefined && streak > 0 && (
               <span className="header__streak">&#128293; {streak}</span>
             )}
           </div>
         ) : (
-          <div aria-hidden="true" />
+          <div className="header__spacer" aria-hidden="true" />
         )}
       </header>
     </>

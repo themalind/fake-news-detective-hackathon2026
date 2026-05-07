@@ -15,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: safe center;
-  padding: 2rem;
+  padding: 1.25rem 2rem 1.5rem;
   text-align: center;
   position: relative;
   background: transparent;
@@ -105,7 +105,7 @@
 
   &__button {
     cursor: pointer;
-    padding: 1rem 3rem;
+    padding: 0.9rem 2.75rem;
     background: $color-primary;
     color: $color-button-text;
     border: none;
@@ -133,10 +133,26 @@
     }
   }
 
+  .player-dashboard {
+    margin-bottom: 1rem;
+  }
+
   &__hint {
-    margin-top: 1.5rem;
+    margin-top: 0.9rem;
     font-size: 0.85rem;
     color: $color-text-muted;
+  }
+
+  @media (max-height: 760px) and (min-width: 700px) {
+    padding-block: 0.75rem 1rem;
+
+    .player-dashboard {
+      margin-bottom: 0.75rem;
+    }
+
+    &__hint {
+      margin-top: 0.6rem;
+    }
   }
 
   &__wall-light {

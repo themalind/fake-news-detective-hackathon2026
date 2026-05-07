@@ -1,7 +1,20 @@
 import Header from "../components/Header";
 import { useGame } from "../context/GameContext";
 import { CASES } from "../data/cases";
+import type { PlayerStats } from "../types/game";
+import { load } from "../utils/storage";
 import "./SummaryPage.scss";
+
+const DEFAULT_STATS: PlayerStats = {
+  totalGames: 0,
+  totalCorrect: 0,
+  totalFooled: 0,
+  totalEvidenceFound: 0,
+  bestStreak: 0,
+  lastStreak: 0,
+  totalScore: 0,
+  badges: [],
+};
 
 function getRank(score: number): string {
   if (score >= 30000) return "Legendär Faktagranskare";
@@ -30,6 +43,7 @@ function getRankBadge(score: number): string {
 export default function SummaryPage() {
   const { state, dispatch } = useGame();
   const { score, maxStreak, results } = state;
+  const experience = (load("stats", DEFAULT_STATS) as PlayerStats).totalScore + score;
 
   const correctCount = results.filter((r) => r.isCorrect).length;
   const accuracy = results.length > 0 ? Math.round((correctCount / results.length) * 100) : 0;
@@ -38,7 +52,7 @@ export default function SummaryPage() {
 
   return (
     <>
-      <Header onLogoClick={() => dispatch({ type: "RESTART" })} />
+      <Header experience={experience} onLogoClick={() => dispatch({ type: "RESTART" })} />
       <main className="summary-page">
         <img
           src="/images/wallLight.png"
