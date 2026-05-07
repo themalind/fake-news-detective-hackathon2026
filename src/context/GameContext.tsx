@@ -128,6 +128,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'PREV_CASE': {
+      const prevIndex = state.currentCaseIndex - 1
+      if (prevIndex < 0) return state
+      const prevCase = CASES[prevIndex]
+      const prevResult = state.results.find(r => r.caseId === prevCase.id)
+      return {
+        ...state,
+        currentCaseIndex: prevIndex,
+        phase: prevResult ? 'feedback' : 'classifying',
+        selectedClassification: prevResult?.selectedClassification ?? null,
+        selectedClueIds: [],
+      }
+    }
+
     case 'RESTART':
       return { ...initialState }
   }

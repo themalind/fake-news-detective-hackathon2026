@@ -1,3 +1,4 @@
+import Header from "../components/Header";
 import PlayerDashboard from "../components/PlayerDashboard";
 import { useMagnify } from "../hooks/useMagnify";
 import "./StartPage.scss";
@@ -7,25 +8,40 @@ interface StartPageProps {
 }
 
 export default function StartPage({ onStart }: StartPageProps) {
-  const dashboardRef = useMagnify<HTMLDivElement>()
-  const hintRef      = useMagnify<HTMLParagraphElement>()
+  const dashboardRef = useMagnify<HTMLDivElement>();
+  const hintRef = useMagnify<HTMLParagraphElement>();
 
   return (
-    <main className="start-page">
-      <img src="/images/wallLight.png" alt="" aria-hidden="true" className="start-page__wall-light start-page__wall-light--left" />
-      <img src="/images/wallLight.png" alt="" aria-hidden="true" className="start-page__wall-light start-page__wall-light--right" />
+    <>
+      <Header isHomePage />
+      <main className="start-page">
+        <div className="start-page__badge">ÄRENDE: ÖPPET</div>
 
-      <p className="start-page__tagline">Granska fakta. Ifrågasätt allt. Avslöja sanningen.</p>
+        <img
+          src="/images/wallLight.png"
+          alt=""
+          aria-hidden="true"
+          className="start-page__wall-light start-page__wall-light--left"
+        />
+        <img
+          src="/images/wallLight.png"
+          alt=""
+          aria-hidden="true"
+          className="start-page__wall-light start-page__wall-light--right"
+        />
 
-      <div ref={dashboardRef}>
-        <PlayerDashboard />
-      </div>
+        <div ref={dashboardRef}>
+          <PlayerDashboard />
+        </div>
 
-      <button className="start-page__button" onClick={onStart}>
-        STARTA UTREDNING
-      </button>
+        <button className="start-page__button" onClick={onStart}>
+          STARTA UTREDNING
+        </button>
 
-      <p className="start-page__hint" ref={hintRef}>Kan du avslöja falska nyheter innan de sprids?</p>
-    </main>
+        <p className="start-page__hint" ref={hintRef}>
+          Kan du avslöja falska nyheter innan de sprids?
+        </p>
+      </main>
+    </>
   );
 }

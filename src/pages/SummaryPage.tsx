@@ -1,5 +1,6 @@
 import { useGame } from '../context/GameContext'
 import { CASES } from '../data/cases'
+import Header from '../components/Header'
 import './SummaryPage.scss'
 
 function getRank(score: number): string {
@@ -30,7 +31,9 @@ export default function SummaryPage() {
   const badge = getRankBadge(score)
 
   return (
-    <main className="summary-page">
+    <>
+      <Header onLogoClick={() => dispatch({ type: 'RESTART' })} />
+      <main className="summary-page">
       <div className="summary-page__card">
         <div className="summary-page__badge">{badge}</div>
         <h1 className="summary-page__rank">{rank}</h1>
@@ -78,5 +81,6 @@ export default function SummaryPage() {
         </button>
       </div>
     </main>
+    </>
   )
 }
