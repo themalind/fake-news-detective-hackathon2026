@@ -15,8 +15,6 @@ export default function StartPage({ onStart }: StartPageProps) {
     <>
       <Header isHomePage />
       <main className="start-page">
-        <div className="start-page__badge">ÄRENDE: ÖPPET</div>
-
         <img
           src="/images/wallLight.png"
           alt=""
