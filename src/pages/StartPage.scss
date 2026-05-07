@@ -129,4 +129,49 @@
     font-size: 0.85rem;
     color: $color-text-muted;
   }
+
+  &__wall-light {
+    display: none;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(80px, 9vw, 130px);
+    pointer-events: none;
+    z-index: 0;
+    animation: wall-light-flicker 4s infinite;
+
+    &--left {
+      left: 14vw;
+      animation-duration: 3.7s;
+    }
+
+    &--right {
+      right: 14vw;
+      transform: translateY(-50%) scaleX(-1);
+      animation-duration: 4.3s;
+    }
+
+    @media (min-width: 900px) {
+      display: block;
+    }
+  }
+}
+
+@keyframes wall-light-flicker {
+  0%   { opacity: 1;    filter: brightness(1); }
+  4%   { opacity: 0.82; filter: brightness(0.88); }
+  8%   { opacity: 1;    filter: brightness(1.06); }
+  14%  { opacity: 0.91; filter: brightness(0.94); }
+  20%  { opacity: 1;    filter: brightness(1); }
+  28%  { opacity: 0.65; filter: brightness(0.75); }
+  30%  { opacity: 1;    filter: brightness(1.08); }
+  34%  { opacity: 0.9;  filter: brightness(0.95); }
+  50%  { opacity: 1;    filter: brightness(1); }
+  64%  { opacity: 0.78; filter: brightness(0.83); }
+  66%  { opacity: 1;    filter: brightness(1.05); }
+  78%  { opacity: 0.92; filter: brightness(0.93); }
+  85%  { opacity: 1;    filter: brightness(1); }
+  92%  { opacity: 0.72; filter: brightness(0.80); }
+  95%  { opacity: 1;    filter: brightness(1.04); }
+  100% { opacity: 1;    filter: brightness(1); }
 }
