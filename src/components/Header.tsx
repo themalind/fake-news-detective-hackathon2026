@@ -28,85 +28,76 @@ export default function Header({
   isNextDisabled = false,
 }: HeaderProps) {
   const logo = (
-    <img src="/images/logo.png" alt="Fake News Detective" className="header__logo-img" />
+    <img
+      src="/images/StylingElements/logo.png"
+      alt="Fake News Detective"
+      className="header__logo-img"
+    />
   );
 
   return (
     <>
-    <svg xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }} aria-hidden="true">
-      <defs>
-        <filter id="fnd-logo-filter" colorInterpolationFilters="sRGB">
-          <feColorMatrix
-            type="matrix"
-            values="1 0 0 0 0
-                    0 1 0 0 0
-                    0 0 1 0 0
-                    -1 -1 -1 3 0"
-          />
-        </filter>
-      </defs>
-    </svg>
-    <header className="header">
-      <div className="header__logo">
-        {isHomePage || !onLogoClick ? (
-          logo
-        ) : (
-          <button
-            className="header__logo-btn"
-            onClick={onLogoClick}
-            aria-label="Gå till startsidan"
-          >
-            {logo}
-          </button>
-        )}
-      </div>
-
-      {showGameNavigation && (
-        <nav className="header__nav" aria-label="Fallnavigering">
-          <button
-            className="header__arrow"
-            onClick={onPrevious}
-            disabled={isPrevDisabled}
-            aria-label="Föregående fall"
-          >
-            ‹
-          </button>
-          <div className="header__dots" aria-hidden="true">
-            {Array.from({ length: totalCases }, (_, i) => (
-              <span
-                key={i}
-                className={`header__dot${
-                  i < currentCaseIndex
-                    ? " header__dot--done"
-                    : i === currentCaseIndex
-                      ? " header__dot--active"
-                      : ""
-                }`}
-              />
-            ))}
-          </div>
-          <button
-            className="header__arrow"
-            onClick={onNext}
-            disabled={isNextDisabled}
-            aria-label="Nästa fall"
-          >
-            ›
-          </button>
-        </nav>
-      )}
-
-      {score !== undefined ? (
-        <div className="header__stats">
-          <span className="header__score">{score} XP</span>
-          {streak !== undefined && streak > 0 && (
-            <span className="header__streak">&#128293; {streak}</span>
+      <header className="header">
+        <div className="header__logo">
+          {isHomePage || !onLogoClick ? (
+            logo
+          ) : (
+            <button
+              className="header__logo-btn"
+              onClick={onLogoClick}
+              aria-label="Gå till startsidan"
+            >
+              {logo}
+            </button>
           )}
         </div>
-      ) : (
-        <div aria-hidden="true" />
-      )}
-    </header>
+
+        {showGameNavigation && (
+          <nav className="header__nav" aria-label="Fallnavigering">
+            <button
+              className="header__arrow"
+              onClick={onPrevious}
+              disabled={isPrevDisabled}
+              aria-label="Föregående fall"
+            >
+              ‹
+            </button>
+            <div className="header__dots" aria-hidden="true">
+              {Array.from({ length: totalCases }, (_, i) => (
+                <span
+                  key={i}
+                  className={`header__dot${
+                    i < currentCaseIndex
+                      ? " header__dot--done"
+                      : i === currentCaseIndex
+                        ? " header__dot--active"
+                        : ""
+                  }`}
+                />
+              ))}
+            </div>
+            <button
+              className="header__arrow"
+              onClick={onNext}
+              disabled={isNextDisabled}
+              aria-label="Nästa fall"
+            >
+              ›
+            </button>
+          </nav>
+        )}
+
+        {score !== undefined ? (
+          <div className="header__stats">
+            <span className="header__score">{score} XP</span>
+            {streak !== undefined && streak > 0 && (
+              <span className="header__streak">&#128293; {streak}</span>
+            )}
+          </div>
+        ) : (
+          <div aria-hidden="true" />
+        )}
+      </header>
     </>
   );
 }

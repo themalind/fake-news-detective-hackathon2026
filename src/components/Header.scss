@@ -4,13 +4,18 @@
   position: sticky;
   top: 0;
   z-index: 10;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.5rem;
-  background: $color-bg-alt;
-  border-bottom: 1px solid $color-card-border;
   gap: 1rem;
+
+  padding: 0.35rem 1.5rem;
+
+  background: $color-card-bg;
+
+  border-bottom: 1px solid rgba(201, 162, 39, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 }
 
 .header__logo {
@@ -20,10 +25,12 @@
 }
 
 .header__logo-img {
-  height: 36px;
+  height: 92px;
   width: auto;
   display: block;
-  filter: url('#fnd-logo-filter');
+
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 12px rgba(201, 162, 39, 0.18));
 }
 
 .header__logo-btn {
@@ -68,7 +75,10 @@
   font-weight: 900;
   color: $color-primary;
   border-radius: $radius-sm;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  transition:
+    opacity 0.15s,
+    background 0.15s,
+    color 0.15s;
   line-height: 1;
   text-shadow: 0 0 8px rgba(201, 162, 39, 0.35);
 
