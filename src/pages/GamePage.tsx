@@ -10,6 +10,7 @@ import type {
   RoundResult,
 } from "../types/game";
 import Header from "../components/Header";
+import { Lock, Search, Star } from "lucide-react";
 import "./GamePage.scss";
 
 interface ArticleContent {
@@ -76,14 +77,22 @@ function useArticleContent(): Record<string, ArticleContent> {
 
 // ---------- Sub-components ----------
 
+const stampConfig = {
+  true: { text: "SANT", modifier: "true" },
+  false: { text: "FALSKT", modifier: "false" },
+  misleading: { text: "VILSELEDANDE", modifier: "misleading" },
+};
+
 function CaseCard({
   currentCase,
   article,
   onImageSearch,
+  selectedClassification,
 }: {
   currentCase: Case;
   article?: ArticleContent;
   onImageSearch?: () => void;
+  selectedClassification?: string | null;
 }) {
   const source = article?.source || currentCase.source;
   const headline = article?.headline || currentCase.headline;
@@ -113,10 +122,17 @@ function CaseCard({
           />
         </g>
       </svg>
+      {selectedClassification && stampConfig[selectedClassification as keyof typeof stampConfig] && (
+        <div
+          className={`case-card__stamp case-card__stamp--${stampConfig[selectedClassification as keyof typeof stampConfig].modifier}`}
+          aria-hidden="true"
+        >
+          {stampConfig[selectedClassification as keyof typeof stampConfig].text}
+        </div>
+      )}
       <article className="case-card">
         <div className="case-card__url-bar">
           <span className="case-card__url-text">{source}</span>
-          <span className="case-card__url-flag">&#9873; Misstänkt källa</span>
         </div>
         <div className="case-card__body">
           <h2 className="case-card__headline">{headline}</h2>
@@ -140,7 +156,8 @@ function CaseCard({
                   onClick={onImageSearch}
                   aria-label="Granska bilden med omvänd bildsökning"
                 >
-                  🔍 Granska
+                  <Search size={14} strokeWidth={2.25} />
+                  Granska
                 </button>
               )}
             </div>
@@ -190,6 +207,9 @@ function ClassifyButton({
 
 interface EvidencePanelProps {
   clues: Clue[];
+  positiveClues: Clue[];
+  misleadingClues: Clue[];
+  classification: Classification;
   selectedClueIds: string[];
   onToggle: (id: string) => void;
   onSubmit: () => void;
@@ -197,40 +217,46 @@ interface EvidencePanelProps {
 
 function EvidencePanel({
   clues,
+  positiveClues,
+  misleadingClues,
+  classification,
   selectedClueIds,
   onToggle,
   onSubmit,
 }: EvidencePanelProps) {
-  const shuffledClues = useMemo(
-    () => [...clues].sort(() => Math.random() - 0.5),
-    [clues],
+  const visibleClues =
+    classification === "true"
+      ? positiveClues
+      : classification === "false"
+        ? clues
+        : misleadingClues;
+
+  const shuffled = useMemo(
+    () => [...visibleClues].sort(() => Math.random() - 0.5),
+    [visibleClues],
   );
+
+  const renderChip = (clue: Clue) => {
+    const selected = selectedClueIds.includes(clue.id);
+    return (
+      <button
+        key={clue.id}
+        className={`clue-chip${selected ? " clue-chip--selected" : ""}`}
+        onClick={() => onToggle(clue.id)}
+        aria-pressed={selected}
+      >
+        <span className="clue-chip__check">{selected ? "✓" : "+"}</span>
+        {clue.text}
+      </button>
+    );
+  };
 
   return (
     <div className="evidence-panel">
       <div className="evidence-panel__header">
-        <span className="evidence-panel__label">VARFÖR TROR DU DET?</span>
-        <span className="evidence-panel__sub">
-          Välj alla ledtrådar som stämmer
-        </span>
+        <span className="evidence-panel__sub">Välj alla bevis som stämmer</span>
       </div>
-
-      <div className="evidence-panel__grid">
-        {shuffledClues.map((clue) => {
-          const selected = selectedClueIds.includes(clue.id);
-          return (
-            <button
-              key={clue.id}
-              className={`clue-chip${selected ? " clue-chip--selected" : ""}`}
-              onClick={() => onToggle(clue.id)}
-              aria-pressed={selected}
-            >
-              <span className="clue-chip__check">{selected ? "✓" : "+"}</span>
-              {clue.text}
-            </button>
-          );
-        })}
-      </div>
+      <div className="evidence-panel__grid">{shuffled.map(renderChip)}</div>
 
       <div className="evidence-panel__footer">
         <span className="evidence-panel__selected-count">
@@ -401,39 +427,109 @@ function BrowserFrame({
   onInspectUrl: () => void;
   children: React.ReactNode;
 }) {
+  const [showLockInfo, setShowLockInfo] = useState(false);
+
   return (
     <div className="browser-frame">
       <div className="browser-frame__url-bar">
         <div className="browser-frame__address" title={source}>
-          <span className="browser-frame__lock" aria-hidden="true">
-            🔒
-          </span>
+          <button
+            type="button"
+            className="browser-frame__lock"
+            onClick={() => setShowLockInfo((v) => !v)}
+            aria-label="Visa anslutningsinformation"
+            aria-expanded={showLockInfo}
+          >
+            <Lock size={12} strokeWidth={2.25} />
+          </button>
           <span className="browser-frame__url">{source}</span>
           <span
             className="browser-frame__address-icon"
             aria-hidden="true"
             title="Sök på sidan"
           >
-            🔍
+            <Search size={14} strokeWidth={2} />
           </span>
           <span
             className="browser-frame__address-icon"
             aria-hidden="true"
             title="Spara som bokmärke"
           >
-            ☆
+            <Star size={14} strokeWidth={2} />
           </span>
         </div>
-        <button
-          type="button"
-          className="browser-frame__inspect"
-          onClick={onInspectUrl}
-          aria-label="Granska URL — vad man ska titta efter"
-        >
-          ⚑ Granska URL
-        </button>
+        {showLockInfo && (
+          <LockInfoPopover
+            source={source}
+            onClose={() => setShowLockInfo(false)}
+            onInspectUrl={() => {
+              setShowLockInfo(false);
+              onInspectUrl();
+            }}
+          />
+        )}
       </div>
       <div className="browser-frame__body">{children}</div>
+    </div>
+  );
+}
+
+function LockInfoPopover({
+  source,
+  onClose,
+  onInspectUrl,
+}: {
+  source: string;
+  onClose: () => void;
+  onInspectUrl: () => void;
+}) {
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (
+        target.closest(".lock-popover") ||
+        target.closest(".browser-frame__lock")
+      ) {
+        return;
+      }
+      onClose();
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="lock-popover" role="dialog" aria-label="Anslutning">
+      <div className="lock-popover__header">
+        <Lock size={16} strokeWidth={2.25} />
+        <span className="lock-popover__title">Anslutningen är krypterad</span>
+      </div>
+      <p className="lock-popover__lead">
+        Sajten använder HTTPS — ingen kan avlyssna det du skickar. Men
+        krypterad ≠ trovärdig.
+      </p>
+      <div className="lock-popover__url-row">
+        <span className="lock-popover__url-label">Adress</span>
+        <span className="lock-popover__url">{source}</span>
+      </div>
+      <p className="lock-popover__warning">
+        Hänglåset säger inget om vem som äger sajten. Kontrollera domänen
+        själv — bedragare har också HTTPS.
+      </p>
+      <button
+        type="button"
+        className="lock-popover__cta"
+        onClick={onInspectUrl}
+      >
+        Fler tips på url-granskning →
+      </button>
     </div>
   );
 }
@@ -441,7 +537,7 @@ function BrowserFrame({
 function HintCard({ hint }: { hint: { title: string; body: string } }) {
   return (
     <aside className="hint-card" aria-label="Detektivtips">
-      <div className="hint-card__badge">🔎 Detektivtips</div>
+      <div className="hint-card__badge">Detektivtips</div>
       <h3 className="hint-card__title">{hint.title}</h3>
       <p className="hint-card__body">{hint.body}</p>
       <p className="hint-card__footer">
@@ -538,7 +634,14 @@ function FeedbackOverlay({
     result.timeElapsed < 20_000 ? 50 : result.timeElapsed < 40_000 ? 25 : 0;
   const classScore = result.isCorrect ? 100 : -50;
 
-  const clueGroups = buildClueGroups(currentCase.clues, selectedClueIds);
+  const clueGroups = buildClueGroups(
+    [
+      ...currentCase.clues,
+      ...currentCase.positiveClues,
+      ...currentCase.misleadingClues,
+    ],
+    selectedClueIds,
+  );
 
   return (
     <div className="feedback-overlay" role="dialog" aria-modal="true">
@@ -556,7 +659,7 @@ function FeedbackOverlay({
             {!result.isCorrect && (
               <span className="feedback-overlay__correct-label">
                 {" "}
-                Artikeln är <strong>{correctLabel}</strong>. Du svarade{" "}
+                Rätt klassificering är <strong>{correctLabel}</strong>. Du svarade{" "}
                 {selectedLabel}.
               </span>
             )}
@@ -707,6 +810,7 @@ export default function GamePage() {
                   ? () => setShowImageAnalysis(true)
                   : undefined
               }
+              selectedClassification={state.selectedClassification}
             />
           </BrowserFrame>
 
@@ -756,6 +860,9 @@ export default function GamePage() {
             {state.phase === "investigating" ? (
               <EvidencePanel
                 clues={currentCase.clues}
+                positiveClues={currentCase.positiveClues}
+                misleadingClues={currentCase.misleadingClues}
+                classification={state.selectedClassification!}
                 selectedClueIds={state.selectedClueIds}
                 onToggle={(id) =>
                   dispatch({ type: "TOGGLE_CLUE", clueId: id })

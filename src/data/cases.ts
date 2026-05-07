@@ -21,6 +21,20 @@ export const CASES: Case[] = [
       { id: 'c1-6', text: 'Artikeln publicerades den här veckan', isRelevant: false },
       { id: 'c1-7', text: 'Artikeln nämner att forskare står bakom upptäckten', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p1-1', text: 'Hälso-sajten har en professionell layout', isRelevant: false },
+      { id: 'p1-2', text: 'Texten nämner att forskning bedrivs', isRelevant: false },
+      { id: 'p1-3', text: 'Påståendet handlar om en faktisk medicinsk fråga', isRelevant: false },
+      { id: 'p1-4', text: 'Artikeln har en tydlig rubrik och brödtext', isRelevant: false },
+      { id: 'p1-5', text: 'Sajten har en publiceringstid angiven', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm1-1', text: 'Rubriken överdriver vad studien säger', isRelevant: false },
+      { id: 'm1-2', text: 'Faktan är riktig men ramas in fel', isRelevant: false },
+      { id: 'm1-3', text: 'Citat är tagna ur sammanhang', isRelevant: false },
+      { id: 'm1-4', text: 'Texten blandar sant med falskt', isRelevant: false },
+      { id: 'm1-5', text: 'Statistik är förvrängd men har grund', isRelevant: false },
+    ],
     feedback:
       'Det här är ett falskt hälsopåstående. Artikeln gör ett mycket stort medicinskt löfte utan spårbara källor, metod eller trovärdig bekräftelse.',
     consequence:
@@ -48,6 +62,21 @@ export const CASES: Case[] = [
       { id: 'c2-5', text: '"Dela innan det tas bort" är ett manipulerande brådskebudskap', isRelevant: true },
       { id: 'c2-6', text: 'Bilden visar verkliga översvämningsskador', isRelevant: false },
       { id: 'c2-7', text: 'Inlägget sprids snabbt på sociala medier', isRelevant: false },
+    ],
+    positiveClues: [
+      { id: 'p2-1', text: 'Inlägget har många delningar', isRelevant: false },
+      { id: 'p2-2', text: 'Bilden är skarp och högupplöst', isRelevant: false },
+      { id: 'p2-3', text: 'Texten anger en tydlig plats (Göteborg)', isRelevant: false },
+      { id: 'p2-4', text: 'Inlägget har en tidsstämpel', isRelevant: false },
+      { id: 'p2-5', text: 'Flera konton har delat samma bild', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm2-1', text: 'Bilden är äkta men placerad i fel sammanhang', isRelevant: true },
+      { id: 'm2-2', text: 'Plats och datum stämmer inte med bilden', isRelevant: true },
+      { id: 'm2-3', text: 'Äldre material framställs som aktuellt', isRelevant: true },
+      { id: 'm2-4', text: 'Brådskebudskap förstärker en illusion av kris', isRelevant: true },
+      { id: 'm2-5', text: 'Inlägget döljer var bilden faktiskt kommer ifrån', isRelevant: true },
+      { id: 'm2-6', text: 'Förstärkande ord ("chockbilder", "evakueras nu") överdriver', isRelevant: true },
     ],
     feedback:
       'Bilden verkar vara äkta, men sammanhanget är fel. Att använda en riktig bild från en annan plats och tid är en vanlig desinformationsteknik.',
@@ -81,6 +110,22 @@ export const CASES: Case[] = [
       { id: 'c3-5', text: 'Artikeln länkar faktiskt till en studie-PDF', isRelevant: false },
       { id: 'c3-6', text: 'Författaren använder titeln "Dr."', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p3-1', text: 'Artikeln refererar till en namngiven studie', isRelevant: false },
+      { id: 'p3-2', text: 'Författaren har akademisk titel (Dr.)', isRelevant: false },
+      { id: 'p3-3', text: 'Det finns ett publiceringsdatum', isRelevant: false },
+      { id: 'p3-4', text: 'Studien länkas i artikeln', isRelevant: false },
+      { id: 'p3-5', text: 'Rubriken anger målgrupp (unga vuxna)', isRelevant: false },
+      { id: 'p3-6', text: 'Texten innehåller numeriska resultat', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm3-1', text: 'Rubriken säger "bevisar" — starkare än vad data tillåter', isRelevant: true },
+      { id: 'm3-2', text: 'Litet urval (12 personer) framställs som generellt', isRelevant: true },
+      { id: 'm3-3', text: 'Sponsorskapet nämns inte i rubriken', isRelevant: true },
+      { id: 'm3-4', text: '"Banbrytande" används utan jämförelse', isRelevant: true },
+      { id: 'm3-5', text: 'Studien finns men slutsatsen är förstärkt', isRelevant: true },
+      { id: 'm3-6', text: 'Förstärkande ord skapar en stark slutsats av svagt underlag', isRelevant: true },
+    ],
     feedback:
       'Studien finns, men artikeln överdriver vad den visar. Ett litet, sponsrat underlag kan inte bära en så stark slutsats.',
     consequence:
@@ -109,6 +154,21 @@ export const CASES: Case[] = [
       { id: 'c4-5', text: 'En begränsning av mobilanvändning under lektioner är faktiskt bekräftad', isRelevant: false },
       { id: 'c4-6', text: 'Artikeln har publiceringsdatum', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p4-1', text: 'Artikeln citerar skolledningen', isRelevant: false },
+      { id: 'p4-2', text: 'Beslutet om nya mobilregler är bekräftat', isRelevant: false },
+      { id: 'p4-3', text: 'Texten ger bakgrund till varför regeln införs', isRelevant: false },
+      { id: 'p4-4', text: 'Artikeln har författarsignatur och datum', isRelevant: false },
+      { id: 'p4-5', text: 'Reglerna handlar om en specifik skola', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm4-1', text: 'Rubriken säger "för alltid" men beslutet är temporärt', isRelevant: true },
+      { id: 'm4-2', text: '"Alla mobiler" överdriver — gäller bara lektionstid', isRelevant: true },
+      { id: 'm4-3', text: 'Beslutet är riktigt men förvrängt i rubriken', isRelevant: true },
+      { id: 'm4-4', text: 'Texten ger en mer nyanserad bild än rubriken', isRelevant: true },
+      { id: 'm4-5', text: 'Förstärkande ord ("alla", "alltid") skapar drama', isRelevant: true },
+      { id: 'm4-6', text: 'Tillfällig regel framställs som permanent', isRelevant: true },
+    ],
     feedback:
       'Kärnan är delvis sann: skolan har en ny mobilregel. Men rubriken gör beslutet mycket mer extremt än det är.',
     consequence:
@@ -136,6 +196,20 @@ export const CASES: Case[] = [
       { id: 'c5-5', text: '"Dela innan bilden försvinner" är en klassisk stressignal', isRelevant: true },
       { id: 'c5-6', text: 'Bilden har hög upplösning', isRelevant: false },
       { id: 'c5-7', text: 'Inlägget använder versaler i rubriken', isRelevant: false },
+    ],
+    positiveClues: [
+      { id: 'p5-1', text: 'Bilden ser detaljerad och realistisk ut', isRelevant: false },
+      { id: 'p5-2', text: 'Inlägget är märkt som "BREAKING"', isRelevant: false },
+      { id: 'p5-3', text: 'Personen i bilden är välkänd', isRelevant: false },
+      { id: 'p5-4', text: 'Inlägget har en tidsstämpel', isRelevant: false },
+      { id: 'p5-5', text: 'Texten innehåller en konkret anklagelse', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm5-1', text: 'Bilden är äkta men i fel sammanhang', isRelevant: false },
+      { id: 'm5-2', text: 'Citatet är taget ur sammanhang', isRelevant: false },
+      { id: 'm5-3', text: 'Faktan finns men är förvrängd', isRelevant: false },
+      { id: 'm5-4', text: 'Rubriken överdriver en verklig händelse', isRelevant: false },
+      { id: 'm5-5', text: 'Förstärkande ord överdriver det som faktiskt hänt', isRelevant: false },
     ],
     feedback:
       'Det här verkar vara en AI-genererad eller manipulerad bild. Bildfel och total avsaknad av trovärdig bekräftelse är starka varningssignaler.',
@@ -166,6 +240,20 @@ export const CASES: Case[] = [
       { id: 'c6-6', text: 'Sidan har en logotyp som påminner om en nyhetssajt', isRelevant: false },
       { id: 'c6-7', text: 'Artikeln nämner ungdomar och internetvanor', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p6-1', text: 'Sajtens logotyp liknar en känd nyhetskälla', isRelevant: false },
+      { id: 'p6-2', text: 'Texten är skriven på flytande svenska', isRelevant: false },
+      { id: 'p6-3', text: 'Artikeln har en författare och datum', isRelevant: false },
+      { id: 'p6-4', text: 'Sidan ser professionell och vältrimmad ut', isRelevant: false },
+      { id: 'p6-5', text: 'Domännamnet innehåller "svt"', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm6-1', text: 'Beslutet finns men är förvrängt', isRelevant: false },
+      { id: 'm6-2', text: 'Rubriken överdriver en riktig händelse', isRelevant: false },
+      { id: 'm6-3', text: 'Bakomliggande fakta är riktig men förstärkt', isRelevant: false },
+      { id: 'm6-4', text: 'Citat tagna ur sammanhang', isRelevant: false },
+      { id: 'm6-5', text: 'Tillfällig åtgärd framställs som permanent', isRelevant: false },
+    ],
     feedback:
       'Det här är en falsk artikel som använder en förvillande URL och låtsas vara en etablerad nyhetskälla. Ett sådant beslut skulle ha tydliga officiella källor.',
     consequence:
@@ -193,6 +281,21 @@ export const CASES: Case[] = [
       { id: 'c7-4', text: '"Barnfamiljer varnas" förstärker dramatiken utan konkret varning från myndighet', isRelevant: true },
       { id: 'c7-5', text: 'Artikeln innehåller intervjuer med kunder', isRelevant: false },
       { id: 'c7-6', text: 'Priser kan faktiskt förändras över tid', isRelevant: false },
+    ],
+    positiveClues: [
+      { id: 'p7-1', text: 'Artikeln innehåller konkreta prissiffror', isRelevant: false },
+      { id: 'p7-2', text: 'Författaren är namngiven', isRelevant: false },
+      { id: 'p7-3', text: 'Texten nämner specifik butik och vara', isRelevant: false },
+      { id: 'p7-4', text: 'Artikeln innehåller intervjuer med kunder', isRelevant: false },
+      { id: 'p7-5', text: 'Källan har "EkonomiDirekt" i namnet', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm7-1', text: '200%-siffran bygger på tre varor i en butik', isRelevant: true },
+      { id: 'm7-2', text: 'Specifikt urval framställs som generellt', isRelevant: true },
+      { id: 'm7-3', text: 'Anekdoter blandas med statistik så det ser starkare ut', isRelevant: true },
+      { id: 'm7-4', text: 'Cherry-picking av priser från en kampanjvecka', isRelevant: true },
+      { id: 'm7-5', text: 'Förstärkande ord ("rusar", "varnas") överdriver', isRelevant: true },
+      { id: 'm7-6', text: 'Rubriken döljer att underlaget är extremt smalt', isRelevant: true },
     ],
     feedback:
       'Artikeln bygger på en verklig observation, men rubriken och statistiken är missvisande. Ett smalt urval presenteras som en generell kris.',
@@ -222,6 +325,22 @@ export const CASES: Case[] = [
       { id: 'c8-5', text: 'Ämnet handlar om klimat och värme', isRelevant: false },
       { id: 'c8-6', text: 'Artikeln nämner kommunala pengar', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p8-1', text: 'Artikeln namnger ansvarig projektledare', isRelevant: true },
+      { id: 'p8-2', text: 'Beslut, budget och tidsperiod anges konkret', isRelevant: true },
+      { id: 'p8-3', text: 'Texten skiljer mellan test och permanent införande', isRelevant: true },
+      { id: 'p8-4', text: 'Försöket beskrivs som litet och utvärderingsbart', isRelevant: true },
+      { id: 'p8-5', text: 'Författaren är namngiven', isRelevant: true },
+      { id: 'p8-6', text: 'Sajten har en seriös design', isRelevant: false },
+      { id: 'p8-7', text: 'Artikeln innehåller en bild', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm8-1', text: 'Rubriken överdriver vad försöket innebär', isRelevant: false },
+      { id: 'm8-2', text: 'Tillfälligt försök framställs som permanent', isRelevant: false },
+      { id: 'm8-3', text: 'Förstärkande ord skapar onödigt drama', isRelevant: false },
+      { id: 'm8-4', text: 'Statistik är cherry-picked', isRelevant: false },
+      { id: 'm8-5', text: 'Citat tagna ur sammanhang', isRelevant: false },
+    ],
     feedback:
       'Det här är en trovärdig artikel. Den är avgränsad, länkar till kontrollerbara uppgifter och drar inte större slutsatser än underlaget stödjer.',
     consequence:
@@ -250,6 +369,20 @@ export const CASES: Case[] = [
       { id: 'c9-5', text: 'Artikeln handlar om säkerhet i hemmet', isRelevant: false },
       { id: 'c9-6', text: 'Brandvarnare är en verklig produktkategori', isRelevant: false },
     ],
+    positiveClues: [
+      { id: 'p9-1', text: 'En expert med professorstitel citeras', isRelevant: false },
+      { id: 'p9-2', text: 'Sajten heter "TryggVardag" — låter pålitligt', isRelevant: false },
+      { id: 'p9-3', text: 'Texten är märkt som annonsbilaga', isRelevant: false },
+      { id: 'p9-4', text: 'Artikeln innehåller varningar och fakta om brand', isRelevant: false },
+      { id: 'p9-5', text: 'Sajten har .org-domän', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm9-1', text: 'Rubriken överdriver vad experten säger', isRelevant: false },
+      { id: 'm9-2', text: 'Faktan finns men ramas in fel', isRelevant: false },
+      { id: 'm9-3', text: '"Helt säkert" är dramatiskt men har grund', isRelevant: false },
+      { id: 'm9-4', text: 'Annonsen blandar verkliga fakta med marknadsföring', isRelevant: false },
+      { id: 'm9-5', text: 'Förstärkande ord överdriver en riktig produkt', isRelevant: false },
+    ],
     feedback:
       'Det här är falskt som säkerhetspåstående. Produkten kan finnas, men artikeln använder falsk auktoritet och absoluta löften utan bevis.',
     consequence:
@@ -277,6 +410,21 @@ export const CASES: Case[] = [
       { id: 'c10-4', text: 'Källan är en lokal nyhetssajt och uppgifterna är kontrollerbara', isRelevant: true },
       { id: 'c10-5', text: 'Artikeln handlar om bibliotek', isRelevant: false },
       { id: 'c10-6', text: 'Artikeln innehåller ett citat', isRelevant: false },
+    ],
+    positiveClues: [
+      { id: 'p10-1', text: 'Artikeln anger exakta öppettider och datum', isRelevant: true },
+      { id: 'p10-2', text: 'Ansvarig person på biblioteket nämns', isRelevant: true },
+      { id: 'p10-3', text: 'Försöket är tidsbegränsat (tre månader)', isRelevant: true },
+      { id: 'p10-4', text: 'Författaren är namngiven', isRelevant: true },
+      { id: 'p10-5', text: 'Beslutet ska utvärderas innan det blir permanent', isRelevant: true },
+      { id: 'p10-6', text: 'Sidan ser professionell ut', isRelevant: false },
+    ],
+    misleadingClues: [
+      { id: 'm10-1', text: 'Rubriken överdriver vad biblioteket gör', isRelevant: false },
+      { id: 'm10-2', text: 'Tillfälligt försök framställs som permanent', isRelevant: false },
+      { id: 'm10-3', text: 'Förstärkande ord skapar onödigt drama', isRelevant: false },
+      { id: 'm10-4', text: 'Beslutet är förvrängt i texten', isRelevant: false },
+      { id: 'm10-5', text: 'Citat tagna ur sammanhang', isRelevant: false },
     ],
     feedback:
       'Det här är en trovärdig lokal nyhet. Den är specifik, kontrollerbar och använder en rubrik som stämmer med innehållet.',

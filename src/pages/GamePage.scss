@@ -36,6 +36,61 @@
   background-color: $color-paper-bg;  // underlay bakom case-card för snällare övergång mellan bakgrund och avriven effekt
 }
 
+.case-card__stamp {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(8deg);
+  z-index: 10;
+  pointer-events: none;
+
+  font-family: "Impact", "Arial Narrow", sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  padding: 0.25em 0.55em;
+  border-width: 0.14em;
+  border-style: solid;
+  border-radius: 0.12em;
+
+  animation: stamp-slap 0.25s cubic-bezier(0.2, 0, 0.4, 1.4) both;
+
+  &--true {
+    color: #009933;
+    border-color: #009933;
+    background: transparent;
+  }
+
+  &--false {
+    color: #b03535;
+    border-color: #b03535;
+    background: transparent;
+  }
+
+  &--misleading {
+    color: #c25e00;
+    border-color: #c25e00;
+    background: transparent;
+  }
+}
+
+@keyframes stamp-slap {
+  0% {
+    transform: translateX(-50%) rotate(8deg) scale(2.2);
+    opacity: 0;
+  }
+  60% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(-50%) rotate(8deg) scale(1);
+    opacity: 0.88;
+  }
+}
+
 .case-card__tear-overlay {
   position: absolute;
   top: 0;
@@ -121,13 +176,6 @@
       right: 1rem;
       border-bottom: 3px double #b8a47a;
     }
-
-    // Smala skärmar: stämpeln överst, källan på rad under
-    @media (max-width: 400px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
   }
 
   &__url-text {
@@ -142,28 +190,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  // "Misstänkt källa" som lutande röd stämpel
-  &__url-flag {
-    font-family: "Courier New", "Courier", monospace;
-    font-size: 0.6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: $color-false;
-    background: rgba(153, 27, 27, 0.08);
-    border: 1.5px solid $color-false;
-    padding: 0.18rem 0.55rem;
-    transform: rotate(5deg);
-    white-space: nowrap;
-    box-shadow: inset 0 0 0 1px rgba(153, 27, 27, 0.3);
-
-    // På smala skärmar: hamna överst i kolumnen och högerställd
-    @media (max-width: 400px) {
-      order: -1;
-      align-self: flex-end;
-    }
   }
 
   &__body {
@@ -348,7 +374,6 @@
     border: 2px solid $color-true;
 
     &:not(:disabled):hover {
-      background: $color-true-light;
       transform: translateY(-2px);
     }
 
@@ -364,7 +389,6 @@
     border: 2px solid $color-false;
 
     &:not(:disabled):hover {
-      background: $color-false-light;
       transform: translateY(-2px);
     }
 
@@ -380,7 +404,6 @@
     border: 2px solid $color-misleading;
 
     &:not(:disabled):hover {
-      background: $color-misleading-light;
       transform: translateY(-2px);
     }
 
@@ -398,21 +421,15 @@
   background: $color-card-bg;
   border: 1px solid $color-card-border;
   border-radius: $radius;
-  padding: 1.25rem;
+  padding: 1rem;
   animation: slideDown 0.25s ease-out;
 
   &__header {
     display: flex;
     align-items: baseline;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-  }
-
-  &__label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: $color-primary;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   &__sub {
@@ -424,10 +441,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 0.6rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.5rem;
   }
 
   &__footer {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid $color-card-border;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -913,6 +933,7 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     color: $color-primary;
+    text-align: center;
   }
 
   &__close {
@@ -1047,17 +1068,18 @@
   flex-direction: column;
   border: 1px solid #3a3020;
   border-radius: 8px;
-  overflow: hidden;
   background: #15120c;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
 
   &__url-bar {
+    position: relative;  // ankare för lock-popover
     display: flex;
     align-items: center;
     gap: 0.65rem;
     padding: 0.55rem 0.75rem;
     background: linear-gradient(to bottom, #2a241a 0%, #1a1612 100%);
     border-bottom: 1px solid #3a3020;
+    border-radius: 8px 8px 0 0;
   }
 
   // Adress-pill — efterliknar webbläsarens adressfält
@@ -1076,8 +1098,28 @@
 
   &__lock {
     flex-shrink: 0;
-    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem;
+    margin: -0.15rem 0;  // kompenserar padding så raden inte växer
+    background: transparent;
+    border: none;
+    border-radius: $radius-sm;
     color: $color-text-muted;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover,
+    &[aria-expanded="true"] {
+      color: $color-text;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
   }
 
   &__url {
@@ -1095,50 +1137,20 @@
   // Sök-ikon + bokmärke i höger del av adress-pillen
   &__address-icon {
     flex-shrink: 0;
-    font-size: 0.85rem;
-    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: $color-text-muted;
     cursor: default;
     transition: color 0.15s;
 
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
     &:hover {
       color: $color-text;
-    }
-  }
-
-  &__inspect {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.35rem 0.75rem;
-    min-height: 32px;
-    background: transparent;
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    border-radius: 999px;
-    color: $color-false;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      border-color 0.15s;
-
-    &:hover {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: $color-false;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 2px;
-    }
-
-    @media (max-width: 480px) {
-      font-size: 0.62rem;
-      padding: 0.3rem 0.55rem;
-      min-height: 30px;
     }
   }
 
@@ -1146,8 +1158,125 @@
   &__body {
     padding: clamp(1rem, 3vw, 1.75rem);
     background: #15120c;  // mörk webbläsarbakgrund bakom papperet
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;  // klipper artikelns inre vid rundade hörn
   }
 }
+
+// ---------- Lock-popover (visas när användaren klickar på låset) ----------
+
+.lock-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0.75rem;
+  z-index: 50;
+  width: clamp(260px, 90vw, 340px);
+  background: $color-card-bg;
+  border: 1px solid $color-card-border;
+  border-radius: $radius;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  animation: fadeIn 0.15s ease-out;
+
+  // Liten "tail" som pekar upp mot låset
+  &::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 18px;
+    width: 12px;
+    height: 12px;
+    background: $color-card-bg;
+    border-top: 1px solid $color-card-border;
+    border-left: 1px solid $color-card-border;
+    transform: rotate(45deg);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $color-success;
+  }
+
+  &__title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $color-text;
+  }
+
+  &__lead {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: $color-text-muted;
+  }
+
+  &__url-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.5rem 0.65rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid $color-card-border;
+    border-radius: $radius-sm;
+  }
+
+  &__url-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+  }
+
+  &__url {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.82rem;
+    color: $color-text;
+    word-break: break-all;
+  }
+
+  &__warning {
+    margin: 0;
+    padding: 0.5rem 0.65rem;
+    background: rgba(180, 83, 9, 0.12);
+    border-left: 2px solid $color-misleading;
+    border-radius: $radius-sm;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: $color-text;
+  }
+
+  &__cta {
+    margin-top: 0.25rem;
+    padding: 0.55rem 0.85rem;
+    min-height: 40px;
+    background: transparent;
+    color: $color-primary;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: rgba(201, 162, 39, 0.12);
+      border-color: $color-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
 
 // ---------- Hint-kort (visas innan klassificering) ----------
 
@@ -1161,18 +1290,19 @@
   gap: 0.55rem;
 
   &__badge {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0.18em;
     color: $color-primary;
     text-transform: uppercase;
     text-align: center;
+    padding-bottom: 8px;
   }
 
   &__title {
     margin: 0;
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 600;
     line-height: 1.25;
     color: $color-text;
   }
