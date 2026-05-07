@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGame } from "../context/GameContext";
 import { CASES } from "../data/cases";
+import { SOURCE_CRITIC_HINTS, URL_INSPECT_TIPS } from "../data/hints";
 import type {
   Case,
   Classification,
@@ -390,6 +391,108 @@ function ImageAnalysisModal({ analysis, onClose }: ImageAnalysisModalProps) {
   );
 }
 
+function BrowserFrame({
+  source,
+  onInspectUrl,
+  children,
+}: {
+  source: string;
+  onInspectUrl: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="browser-frame">
+      <div className="browser-frame__url-bar">
+        <span className="browser-frame__lock" aria-hidden="true">
+          🔒
+        </span>
+        <span className="browser-frame__url" title={source}>
+          {source}
+        </span>
+        <button
+          type="button"
+          className="browser-frame__inspect"
+          onClick={onInspectUrl}
+          aria-label="Granska URL — vad man ska titta efter"
+        >
+          ⚑ Granska URL
+        </button>
+      </div>
+      <div className="browser-frame__body">{children}</div>
+    </div>
+  );
+}
+
+function HintCard({ hint }: { hint: { title: string; body: string } }) {
+  return (
+    <aside className="hint-card" aria-label="Detektivtips">
+      <div className="hint-card__badge">🔎 Detektivtips</div>
+      <h3 className="hint-card__title">{hint.title}</h3>
+      <p className="hint-card__body">{hint.body}</p>
+      <p className="hint-card__footer">
+        Välj en klassificering för att börja samla bevis.
+      </p>
+    </aside>
+  );
+}
+
+function UrlInspectModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="url-inspect-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Granska URL"
+      onClick={onClose}
+    >
+      <div
+        className="url-inspect-modal__card"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="url-inspect-modal__header">
+          <span className="url-inspect-modal__title">GRANSKA URL</span>
+          <button
+            className="url-inspect-modal__close"
+            onClick={onClose}
+            aria-label="Stäng"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p className="url-inspect-modal__lead">
+          Adressfältet ljuger ibland. Här är vad en bra detektiv tittar efter
+          innan hen litar på en länk:
+        </p>
+
+        <ul className="url-inspect-modal__list">
+          {URL_INSPECT_TIPS.map((tip) => (
+            <li className="url-inspect-modal__item" key={tip.title}>
+              <span className="url-inspect-modal__item-title">{tip.title}</span>
+              <span className="url-inspect-modal__item-body">{tip.body}</span>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          className="url-inspect-modal__close-btn"
+          onClick={onClose}
+        >
+          STÄNG
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface FeedbackOverlayProps {
   result: RoundResult;
   currentCase: Case;
@@ -539,9 +642,14 @@ export default function GamePage() {
   const lastResult = state.results[state.results.length - 1];
   const isLastCase = state.currentCaseIndex === CASES.length - 1;
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
+  const [showUrlInspect, setShowUrlInspect] = useState(false);
+
+  const currentHint =
+    SOURCE_CRITIC_HINTS[state.currentCaseIndex % SOURCE_CRITIC_HINTS.length];
 
   useEffect(() => {
     setShowImageAnalysis(false);
+    setShowUrlInspect(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [state.currentCaseIndex]);
 
@@ -578,66 +686,79 @@ export default function GamePage() {
       </header>
 
       <div className="game-page__body">
-        <CaseCard
-          currentCase={currentCase}
-          article={currentArticle}
-          onImageSearch={
-            currentCase.imageAnalysis
-              ? () => setShowImageAnalysis(true)
-              : undefined
-          }
-        />
+        <div className="game-page__layout">
+          <BrowserFrame
+            source={currentCase.source}
+            onInspectUrl={() => setShowUrlInspect(true)}
+          >
+            <CaseCard
+              currentCase={currentCase}
+              article={currentArticle}
+              onImageSearch={
+                currentCase.imageAnalysis
+                  ? () => setShowImageAnalysis(true)
+                  : undefined
+              }
+            />
+          </BrowserFrame>
 
-        <section className="classify-panel">
-          <p className="classify-panel__label">KLASSIFICERA ARTIKELN</p>
-          <div className="classify-panel__buttons">
-            <ClassifyButton
-              label="SANT"
-              value="true"
-              selected={state.selectedClassification === "true"}
-              disabled={state.phase === "feedback"}
-              onClick={() =>
-                dispatch({
-                  type: "SELECT_CLASSIFICATION",
-                  classification: "true",
-                })
-              }
-            />
-            <ClassifyButton
-              label="FALSKT"
-              value="false"
-              selected={state.selectedClassification === "false"}
-              disabled={state.phase === "feedback"}
-              onClick={() =>
-                dispatch({
-                  type: "SELECT_CLASSIFICATION",
-                  classification: "false",
-                })
-              }
-            />
-            <ClassifyButton
-              label="VILSELEDANDE"
-              value="misleading"
-              selected={state.selectedClassification === "misleading"}
-              disabled={state.phase === "feedback"}
-              onClick={() =>
-                dispatch({
-                  type: "SELECT_CLASSIFICATION",
-                  classification: "misleading",
-                })
-              }
-            />
-          </div>
-        </section>
+          <aside className="game-page__sidebar">
+            <section className="classify-panel">
+              <p className="classify-panel__label">KLASSIFICERA ARTIKELN</p>
+              <div className="classify-panel__buttons">
+                <ClassifyButton
+                  label="SANT"
+                  value="true"
+                  selected={state.selectedClassification === "true"}
+                  disabled={state.phase === "feedback"}
+                  onClick={() =>
+                    dispatch({
+                      type: "SELECT_CLASSIFICATION",
+                      classification: "true",
+                    })
+                  }
+                />
+                <ClassifyButton
+                  label="FALSKT"
+                  value="false"
+                  selected={state.selectedClassification === "false"}
+                  disabled={state.phase === "feedback"}
+                  onClick={() =>
+                    dispatch({
+                      type: "SELECT_CLASSIFICATION",
+                      classification: "false",
+                    })
+                  }
+                />
+                <ClassifyButton
+                  label="VILSELEDANDE"
+                  value="misleading"
+                  selected={state.selectedClassification === "misleading"}
+                  disabled={state.phase === "feedback"}
+                  onClick={() =>
+                    dispatch({
+                      type: "SELECT_CLASSIFICATION",
+                      classification: "misleading",
+                    })
+                  }
+                />
+              </div>
+            </section>
 
-        {state.phase === "investigating" && (
-          <EvidencePanel
-            clues={currentCase.clues}
-            selectedClueIds={state.selectedClueIds}
-            onToggle={(id) => dispatch({ type: "TOGGLE_CLUE", clueId: id })}
-            onSubmit={() => dispatch({ type: "SUBMIT_CASE" })}
-          />
-        )}
+            {state.phase === "investigating" ? (
+              <EvidencePanel
+                clues={currentCase.clues}
+                selectedClueIds={state.selectedClueIds}
+                onToggle={(id) =>
+                  dispatch({ type: "TOGGLE_CLUE", clueId: id })
+                }
+                onSubmit={() => dispatch({ type: "SUBMIT_CASE" })}
+              />
+            ) : (
+              <HintCard hint={currentHint} />
+            )}
+          </aside>
+        </div>
       </div>
 
       {state.phase === "feedback" && lastResult && (
@@ -648,6 +769,10 @@ export default function GamePage() {
           isLastCase={isLastCase}
           onNext={() => dispatch({ type: "NEXT_CASE" })}
         />
+      )}
+
+      {showUrlInspect && (
+        <UrlInspectModal onClose={() => setShowUrlInspect(false)} />
       )}
 
       {showImageAnalysis && currentCase.imageAnalysis && (
