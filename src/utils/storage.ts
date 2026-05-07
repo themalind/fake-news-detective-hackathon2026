@@ -1,31 +1,26 @@
-const PREFIX = 'fnd:';
+// Enkel localStorage-wrapper för spelets statistik och annan data.
+// Alla nycklar prefixas så vi inte krockar med annat på samma origin.
+const PREFIX = 'fnd:'
 
-const key = (k: string) => `${PREFIX}${k}`;
+export function load(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(PREFIX + key)
+    return raw === null ? fallback : JSON.parse(raw)
+  } catch {
+    return fallback
+  }
+}
 
-export const storage = {
-  get<T>(k: string, fallback: T): T {
-    try {
-      const raw = localStorage.getItem(key(k));
-      if (raw === null) return fallback;
-      return JSON.parse(raw) as T;
-    } catch {
-      return fallback;
-    }
-  },
+export function save(key, value) {
+  localStorage.setItem(PREFIX + key, JSON.stringify(value))
+}
 
-  set<T>(k: string, value: T): void {
-    try {
-      localStorage.setItem(key(k), JSON.stringify(value));
-    } catch {
-      // Quota full eller privat läge — ignorera tyst, state finns kvar i minnet.
-    }
-  },
+export function remove(key) {
+  localStorage.removeItem(PREFIX + key)
+}
 
-  remove(k: string): void {
-    try {
-      localStorage.removeItem(key(k));
-    } catch {
-      // ignorera
-    }
-  },
-};
+export function clearAll() {
+  for (const key of Object.keys(localStorage)) {
+    if (key.startsWith(PREFIX)) localStorage.removeItem(key)
+  }
+}
