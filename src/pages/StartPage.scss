@@ -1,0 +1,60 @@
+@use 'sass:color';
+@use 'styles/variables' as *;
+
+.start-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-xl $layout-padding-inline;
+  background: radial-gradient(
+    ellipse at top,
+    color.adjust($color-bg, $lightness: 6%),
+    $color-bg 70%
+  );
+
+  &__inner {
+    width: 100%;
+    max-width: $layout-max-width;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-lg;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 6vw, 3.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  &__lead {
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    color: $color-text-muted;
+    max-width: 40ch;
+  }
+
+  &__cta {
+    margin-top: $space-md;
+    min-height: $tap-target-min;
+    padding: $space-md clamp(2rem, 8vw, 3.5rem);
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: $color-bg;
+    background: $color-primary;
+    border-radius: $radius-pill;
+    box-shadow: $shadow-md;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+
+    &:hover {
+      background: $color-primary-hover;
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
