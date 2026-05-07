@@ -404,12 +404,26 @@ function BrowserFrame({
   return (
     <div className="browser-frame">
       <div className="browser-frame__url-bar">
-        <span className="browser-frame__lock" aria-hidden="true">
-          🔒
-        </span>
-        <span className="browser-frame__url" title={source}>
-          {source}
-        </span>
+        <div className="browser-frame__address" title={source}>
+          <span className="browser-frame__lock" aria-hidden="true">
+            🔒
+          </span>
+          <span className="browser-frame__url">{source}</span>
+          <span
+            className="browser-frame__address-icon"
+            aria-hidden="true"
+            title="Sök på sidan"
+          >
+            🔍
+          </span>
+          <span
+            className="browser-frame__address-icon"
+            aria-hidden="true"
+            title="Spara som bokmärke"
+          >
+            ☆
+          </span>
+        </div>
         <button
           type="button"
           className="browser-frame__inspect"
