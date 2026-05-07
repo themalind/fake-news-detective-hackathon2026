@@ -32,7 +32,12 @@ export interface Case {
   headline: string;
   content: string;
   correctClassification: Classification;
+  /** Bevis som visas när användaren klassar artikeln som FALSKT */
   clues: Clue[];
+  /** Bevis som visas när användaren klassar artikeln som SANT */
+  positiveClues: Clue[];
+  /** Bevis som visas när användaren klassar artikeln som VILSELEDANDE */
+  misleadingClues: Clue[];
   /** Short explanation shown after submitting */
   feedback: string;
   /** "If shared, this could…" shown in feedback */

@@ -207,6 +207,9 @@ function ClassifyButton({
 
 interface EvidencePanelProps {
   clues: Clue[];
+  positiveClues: Clue[];
+  misleadingClues: Clue[];
+  classification: Classification;
   selectedClueIds: string[];
   onToggle: (id: string) => void;
   onSubmit: () => void;
@@ -214,40 +217,46 @@ interface EvidencePanelProps {
 
 function EvidencePanel({
   clues,
+  positiveClues,
+  misleadingClues,
+  classification,
   selectedClueIds,
   onToggle,
   onSubmit,
 }: EvidencePanelProps) {
-  const shuffledClues = useMemo(
-    () => [...clues].sort(() => Math.random() - 0.5),
-    [clues],
+  const visibleClues =
+    classification === "true"
+      ? positiveClues
+      : classification === "false"
+        ? clues
+        : misleadingClues;
+
+  const shuffled = useMemo(
+    () => [...visibleClues].sort(() => Math.random() - 0.5),
+    [visibleClues],
   );
+
+  const renderChip = (clue: Clue) => {
+    const selected = selectedClueIds.includes(clue.id);
+    return (
+      <button
+        key={clue.id}
+        className={`clue-chip${selected ? " clue-chip--selected" : ""}`}
+        onClick={() => onToggle(clue.id)}
+        aria-pressed={selected}
+      >
+        <span className="clue-chip__check">{selected ? "✓" : "+"}</span>
+        {clue.text}
+      </button>
+    );
+  };
 
   return (
     <div className="evidence-panel">
       <div className="evidence-panel__header">
-        <span className="evidence-panel__label">VARFÖR TROR DU DET?</span>
-        <span className="evidence-panel__sub">
-          Välj alla ledtrådar som stämmer
-        </span>
+        <span className="evidence-panel__sub">Välj alla bevis som stämmer</span>
       </div>
-
-      <div className="evidence-panel__grid">
-        {shuffledClues.map((clue) => {
-          const selected = selectedClueIds.includes(clue.id);
-          return (
-            <button
-              key={clue.id}
-              className={`clue-chip${selected ? " clue-chip--selected" : ""}`}
-              onClick={() => onToggle(clue.id)}
-              aria-pressed={selected}
-            >
-              <span className="clue-chip__check">{selected ? "✓" : "+"}</span>
-              {clue.text}
-            </button>
-          );
-        })}
-      </div>
+      <div className="evidence-panel__grid">{shuffled.map(renderChip)}</div>
 
       <div className="evidence-panel__footer">
         <span className="evidence-panel__selected-count">
@@ -625,7 +634,14 @@ function FeedbackOverlay({
     result.timeElapsed < 20_000 ? 50 : result.timeElapsed < 40_000 ? 25 : 0;
   const classScore = result.isCorrect ? 100 : -50;
 
-  const clueGroups = buildClueGroups(currentCase.clues, selectedClueIds);
+  const clueGroups = buildClueGroups(
+    [
+      ...currentCase.clues,
+      ...currentCase.positiveClues,
+      ...currentCase.misleadingClues,
+    ],
+    selectedClueIds,
+  );
 
   return (
     <div className="feedback-overlay" role="dialog" aria-modal="true">
@@ -643,7 +659,7 @@ function FeedbackOverlay({
             {!result.isCorrect && (
               <span className="feedback-overlay__correct-label">
                 {" "}
-                Artikeln är <strong>{correctLabel}</strong>. Du svarade{" "}
+                Rätt klassificering är <strong>{correctLabel}</strong>. Du svarade{" "}
                 {selectedLabel}.
               </span>
             )}
@@ -844,6 +860,9 @@ export default function GamePage() {
             {state.phase === "investigating" ? (
               <EvidencePanel
                 clues={currentCase.clues}
+                positiveClues={currentCase.positiveClues}
+                misleadingClues={currentCase.misleadingClues}
+                classification={state.selectedClassification!}
                 selectedClueIds={state.selectedClueIds}
                 onToggle={(id) =>
                   dispatch({ type: "TOGGLE_CLUE", clueId: id })

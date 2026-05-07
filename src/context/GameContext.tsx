@@ -76,12 +76,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'SUBMIT_CASE': {
       const currentCase = CASES[state.currentCaseIndex]
+      const allClues = [
+        ...currentCase.clues,
+        ...currentCase.positiveClues,
+        ...currentCase.misleadingClues,
+      ]
       const timeElapsed = Date.now() - state.roundStartTime
       const roundScore = calcRoundScore(
         state.selectedClassification!,
         currentCase.correctClassification,
         state.selectedClueIds,
-        currentCase.clues,
+        allClues,
         timeElapsed
       )
       const isCorrect =
@@ -94,10 +99,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         selectedClassification: state.selectedClassification!,
         isCorrect,
         correctCluesSelected: state.selectedClueIds.filter(
-          (id) => currentCase.clues.find((c) => c.id === id)?.isRelevant
+          (id) => allClues.find((c) => c.id === id)?.isRelevant
         ).length,
         incorrectCluesSelected: state.selectedClueIds.filter(
-          (id) => !currentCase.clues.find((c) => c.id === id)?.isRelevant
+          (id) => !allClues.find((c) => c.id === id)?.isRelevant
         ).length,
         scoreGained: roundScore,
         timeElapsed,
