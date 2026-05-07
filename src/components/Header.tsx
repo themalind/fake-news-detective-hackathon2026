@@ -37,7 +37,7 @@ export default function Header({
 
   return (
     <>
-      <header className="header">
+      <header className={`header${isHomePage ? " header--home" : ""}`}>
         <div className="header__logo">
           {isHomePage || !onLogoClick ? (
             logo

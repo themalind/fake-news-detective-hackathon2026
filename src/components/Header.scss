@@ -52,6 +52,11 @@
     drop-shadow(0 0 12px rgba(201, 162, 39, 0.18));
 }
 
+.header--home .header__logo-img {
+  height: 82px;
+  margin-top: -10px;
+}
+
 .header__logo-btn {
   all: unset;
   cursor: pointer;
