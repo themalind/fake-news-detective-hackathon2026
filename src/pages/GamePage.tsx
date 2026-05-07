@@ -8,6 +8,7 @@ import type {
   ImageAnalysis,
   RoundResult,
 } from "../types/game";
+import Header from "../components/Header";
 import "./GamePage.scss";
 
 interface ArticleContent {
@@ -556,27 +557,23 @@ export default function GamePage() {
 
   return (
     <div className="game-page">
-      <header className="game-page__header">
+      <Header
+        showGameNavigation
+        currentCaseIndex={state.currentCaseIndex}
+        totalCases={CASES.length}
+        score={state.score}
+        streak={state.streak}
+        onLogoClick={() => dispatch({ type: "RESTART" })}
+        onPrevious={() => dispatch({ type: "PREV_CASE" })}
+        onNext={() => dispatch({ type: "NEXT_CASE" })}
+        isPrevDisabled={state.currentCaseIndex === 0}
+        isNextDisabled={state.phase !== "feedback"}
+      />
+
+      <div className="game-page__body">
         <div className="game-page__case-label">
           UTREDNING #{currentCase.caseNumber}
         </div>
-        <div className="game-page__progress">
-          {CASES.map((_, i) => (
-            <span
-              key={i}
-              className={`game-page__dot${i < state.currentCaseIndex ? " game-page__dot--done" : i === state.currentCaseIndex ? " game-page__dot--active" : ""}`}
-            />
-          ))}
-        </div>
-        <div className="game-page__stats">
-          <span className="game-page__score">{state.score} XP</span>
-          {state.streak > 0 && (
-            <span className="game-page__streak">&#128293; {state.streak}</span>
-          )}
-        </div>
-      </header>
-
-      <div className="game-page__body">
         <CaseCard
           currentCase={currentCase}
           article={currentArticle}

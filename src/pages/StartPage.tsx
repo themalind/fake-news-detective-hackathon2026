@@ -1,4 +1,5 @@
 import PlayerDashboard from "../components/PlayerDashboard";
+import Header from "../components/Header";
 import "./StartPage.scss";
 
 interface StartPageProps {
@@ -7,7 +8,9 @@ interface StartPageProps {
 
 export default function StartPage({ onStart }: StartPageProps) {
   return (
-    <main className="start-page">
+    <>
+      <Header isHomePage />
+      <main className="start-page">
       <div className="start-page__badge">ÄRENDE: ÖPPET</div>
 
       <h1 className="start-page__title">Fake News Detective</h1>
@@ -22,5 +25,6 @@ export default function StartPage({ onStart }: StartPageProps) {
 
       <p className="start-page__hint">Kan du avslöja falska nyheter innan de sprids?</p>
     </main>
+    </>
   );
 }

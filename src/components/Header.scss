@@ -1,0 +1,141 @@
+@use "../styles/variables" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: $color-bg-alt;
+  border-bottom: 1px solid $color-card-border;
+  gap: 1rem;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header__logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
+  filter: url('#fnd-logo-filter');
+}
+
+.header__logo-btn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  border-radius: $radius-sm;
+  transition: opacity 0.15s;
+  min-height: 44px;
+  min-width: 44px;
+
+  &:hover {
+    opacity: 0.75;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 3px;
+  }
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header__arrow {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: $color-primary;
+  border-radius: $radius-sm;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(201, 162, 39, 0.35);
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dim;
+    color: $color-primary-hover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: default;
+    text-shadow: none;
+  }
+}
+
+.header__dots {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.header__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-card-border;
+  transition: background 0.2s;
+
+  &--done {
+    background: $color-primary;
+    opacity: 0.5;
+  }
+
+  &--active {
+    background: $color-primary;
+    box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.header__stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.header__score {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-primary;
+  white-space: nowrap;
+}
+
+.header__streak {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-text;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: $radius-sm;
+  padding: 0.2rem 0.6rem;
+  white-space: nowrap;
+}
