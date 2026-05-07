@@ -45,7 +45,9 @@ export default function SummaryPage() {
   const { score, maxStreak, results } = state;
   const experience = (load("stats", DEFAULT_STATS) as PlayerStats).totalScore + score;
 
-  const correctCount = results.filter((r) => r.isCorrect).length;
+  const correctResults = results.filter((r) => r.isCorrect);
+  const wrongResults = results.filter((r) => !r.isCorrect);
+  const correctCount = correctResults.length;
   const accuracy = results.length > 0 ? Math.round((correctCount / results.length) * 100) : 0;
   const rank = getRank(score);
   const badge = getRankBadge(score);
@@ -67,67 +69,101 @@ export default function SummaryPage() {
           className="summary-page__wall-light summary-page__wall-light--right"
         />
         <div className="summary-page__card">
+          <span className="summary-page__corner summary-page__corner--tl" aria-hidden="true">✦</span>
+          <span className="summary-page__corner summary-page__corner--tr" aria-hidden="true">✦</span>
+          <span className="summary-page__corner summary-page__corner--bl" aria-hidden="true">✦</span>
+          <span className="summary-page__corner summary-page__corner--br" aria-hidden="true">✦</span>
           <h1 className="summary-page__rank">{rank}</h1>
           <p className="summary-page__score">{score} XP</p>
 
           <div className="summary-page__stats">
             <div className="summary-stat">
-              <span className="summary-stat__value">
-                {correctCount}/{results.length}
-              </span>
+              <div className="summary-stat__row">
+                <img
+                  src="/images/StylingElements/check.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="summary-stat__icon"
+                />
+                <span className="summary-stat__value">
+                  {correctCount}/{results.length}
+                </span>
+              </div>
               <span className="summary-stat__label">Fall lösta</span>
             </div>
             <div className="summary-stat">
-              <span className="summary-stat__value">{accuracy}%</span>
+              <div className="summary-stat__row">
+                <img
+                  src="/images/StylingElements/dartboard.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="summary-stat__icon"
+                />
+                <span className="summary-stat__value">{accuracy}%</span>
+              </div>
               <span className="summary-stat__label">Träffsäkerhet</span>
             </div>
             <div className="summary-stat">
-              <span className="summary-stat__value">&#128293; {maxStreak}</span>
+              <div className="summary-stat__row">
+                <img
+                  src="/images/StylingElements/fire1.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="summary-stat__icon"
+                />
+                <span className="summary-stat__value">{maxStreak}</span>
+              </div>
               <span className="summary-stat__label">Bästa streak</span>
             </div>
           </div>
 
-          <div className="summary-page__cases">
-            <div className="summary-page__cases-col">
-              <h3 className="summary-page__cases-heading summary-page__cases-heading--correct">Lösta fall</h3>
-              {results
-                .filter((r) => r.isCorrect)
-                .map((result) => {
-                  const c = CASES.find((cas) => cas.id === result.caseId);
-                  return (
-                    <div key={result.caseId} className="summary-case summary-case--correct">
-                      <span className="summary-case__icon">✓</span>
-                      <span className="summary-case__headline">{c?.headline}</span>
-                      <span className="summary-case__score">+{result.scoreGained} XP</span>
-                    </div>
-                  );
-                })}
+          {(correctResults.length > 0 || wrongResults.length > 0) && (
+            <div className="summary-page__cases">
+              {correctResults.length > 0 && (
+                <div className="summary-page__cases-col">
+                  <h3 className="summary-page__cases-heading summary-page__cases-heading--correct">
+                    Lösta fall
+                  </h3>
+                  {correctResults.map((result) => {
+                    const c = CASES.find((cas) => cas.id === result.caseId);
+                    return (
+                      <div key={result.caseId} className="summary-case summary-case--correct">
+                        <span className="summary-case__icon">✓</span>
+                        <span className="summary-case__headline">{c?.headline}</span>
+                        <span className="summary-case__score">+{result.scoreGained} XP</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {wrongResults.length > 0 && (
+                <div className="summary-page__cases-col">
+                  <h3 className="summary-page__cases-heading summary-page__cases-heading--wrong">
+                    Missade fall
+                  </h3>
+                  {wrongResults.map((result) => {
+                    const c = CASES.find((cas) => cas.id === result.caseId);
+                    return (
+                      <div key={result.caseId} className="summary-case summary-case--wrong">
+                        <span className="summary-case__icon">✗</span>
+                        <span className="summary-case__headline">{c?.headline}</span>
+                        <span className="summary-case__score">{result.scoreGained} XP</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <div className="summary-page__cases-col">
-              <h3 className="summary-page__cases-heading summary-page__cases-heading--wrong">Missade fall</h3>
-              {results
-                .filter((r) => !r.isCorrect)
-                .map((result) => {
-                  const c = CASES.find((cas) => cas.id === result.caseId);
-                  return (
-                    <div key={result.caseId} className="summary-case summary-case--wrong">
-                      <span className="summary-case__icon">✗</span>
-                      <span className="summary-case__headline">{c?.headline}</span>
-                      <span className="summary-case__score">{result.scoreGained} XP</span>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
+          )}
+        </div>
 
-          <div className="summary-page__actions">
-            <button className="summary-page__restart" onClick={() => dispatch({ type: "RESTART" })}>
-              UTRED IGEN
-            </button>
-            <button className="summary-page__dashboard" onClick={() => dispatch({ type: "RESTART" })}>
-              TILL DASHBOARD
-            </button>
-          </div>
+        <div className="summary-page__actions">
+          <button className="summary-page__restart" onClick={() => dispatch({ type: "RESTART" })}>
+            UTRED IGEN
+          </button>
+          <button className="summary-page__dashboard" onClick={() => dispatch({ type: "RESTART" })}>
+            TILL DASHBOARD
+          </button>
         </div>
       </main>
     </>
