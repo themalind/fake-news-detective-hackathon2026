@@ -87,4 +87,5 @@ export type GameAction =
   | { type: "TOGGLE_CLUE"; clueId: string }
   | { type: "SUBMIT_CASE" }
   | { type: "NEXT_CASE" }
+  | { type: "PREV_CASE" }
   | { type: "RESTART" };

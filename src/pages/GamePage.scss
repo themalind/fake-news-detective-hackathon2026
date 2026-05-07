@@ -9,73 +9,12 @@
   flex-direction: column;
   background-color: $color-bg;
 
-  &__header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
-    background: $color-bg-alt;
-    border-bottom: 1px solid $color-card-border;
-    gap: 1rem;
-  }
-
   &__case-label {
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.15em;
     color: $color-primary;
     white-space: nowrap;
-  }
-
-  &__progress {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  &__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: $color-card-border;
-    transition: background 0.2s;
-
-    &--done {
-      background: $color-primary;
-      opacity: 0.5;
-    }
-
-    &--active {
-      background: $color-primary;
-      box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
-      width: 10px;
-      height: 10px;
-    }
-  }
-
-  &__stats {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  &__score {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: $color-primary;
-  }
-
-  &__streak {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: $color-text;
-    background: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: $radius-sm;
-    padding: 0.2rem 0.6rem;
   }
 
   &__body {
