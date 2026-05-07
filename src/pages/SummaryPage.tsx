@@ -124,16 +124,18 @@ export default function SummaryPage() {
                   <h3 className="summary-page__cases-heading summary-page__cases-heading--correct">
                     Lösta fall
                   </h3>
-                  {correctResults.map((result) => {
-                    const c = CASES.find((cas) => cas.id === result.caseId);
-                    return (
-                      <div key={result.caseId} className="summary-case summary-case--correct">
-                        <span className="summary-case__icon">✓</span>
-                        <span className="summary-case__headline">{c?.headline}</span>
-                        <span className="summary-case__score">+{result.scoreGained} XP</span>
-                      </div>
-                    );
-                  })}
+                  <ul className="summary-page__cases-list">
+                    {correctResults.map((result) => {
+                      const c = CASES.find((cas) => cas.id === result.caseId);
+                      return (
+                        <li key={result.caseId} className="summary-case summary-case--correct">
+                          <span className="summary-case__icon">✓</span>
+                          <span className="summary-case__headline">{c?.headline}</span>
+                          <span className="summary-case__score">+{result.scoreGained} XP</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
               )}
               {wrongResults.length > 0 && (
@@ -141,16 +143,18 @@ export default function SummaryPage() {
                   <h3 className="summary-page__cases-heading summary-page__cases-heading--wrong">
                     Missade fall
                   </h3>
-                  {wrongResults.map((result) => {
-                    const c = CASES.find((cas) => cas.id === result.caseId);
-                    return (
-                      <div key={result.caseId} className="summary-case summary-case--wrong">
-                        <span className="summary-case__icon">✗</span>
-                        <span className="summary-case__headline">{c?.headline}</span>
-                        <span className="summary-case__score">{result.scoreGained} XP</span>
-                      </div>
-                    );
-                  })}
+                  <ul className="summary-page__cases-list">
+                    {wrongResults.map((result) => {
+                      const c = CASES.find((cas) => cas.id === result.caseId);
+                      return (
+                        <li key={result.caseId} className="summary-case summary-case--wrong">
+                          <span className="summary-case__icon">✗</span>
+                          <span className="summary-case__headline">{c?.headline}</span>
+                          <span className="summary-case__score">{result.scoreGained} XP</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
               )}
             </div>

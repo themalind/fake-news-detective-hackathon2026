@@ -135,16 +135,25 @@
     gap: 0.6rem;
     width: 100%;
     margin: 0;
-    @include brass-divider;
-    padding-top: 1rem;
     margin-top: 0.5rem;
+
+    // Smala skärmar — alla tre rader i en gemensam box med skiljare emellan
+    @media (max-width: 400px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(201, 162, 39, 0.12);
+      border-radius: $radius-sm;
+      padding: 0.4rem 0.85rem;
+      box-shadow: none;
+    }
   }
 
   &__cases {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem 2rem;
+    gap: 1.5rem 0.6rem;
     @include brass-divider;
     padding-top: 1rem;
     margin-top: 0.5rem;
@@ -165,6 +174,18 @@
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+  }
+
+  // Lista med gemensam bakgrund — case-raderna är slimmade och separeras med skiljare
+  &__cases-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0.85rem;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(201, 162, 39, 0.08);
+    border-radius: $radius-sm;
+    display: flex;
+    flex-direction: column;
   }
 
   // Dossier-stil rubrik med liten gradient-linje bredvid (matchar dashboard)
@@ -321,6 +342,31 @@
     rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(201, 162, 39, 0.12);
 
+  // På smala skärmar — bara en rad inom den gemensamma stats-boxen
+  @media (max-width: 400px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+    padding: 0.45rem 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+
+    & + & {
+      border-top: 1px solid rgba(201, 162, 39, 0.1);
+    }
+
+    &__label {
+      order: 0;
+      text-align: left;
+    }
+
+    &__row {
+      order: 1;
+    }
+  }
+
   &__row {
     display: flex;
     align-items: center;
@@ -359,12 +405,14 @@
 .summary-case {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: $radius-sm;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
   font-size: 0.78rem;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(201, 162, 39, 0.08);
+
+  // Tunn skiljare mellan consekutiva case-rader i samma lista
+  & + & {
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+  }
 
   &__icon {
     flex-shrink: 0;
@@ -392,24 +440,14 @@
   }
 
   &--correct {
-    // border-left: 3px solid $color-success;
-
-    .summary-case__icon {
-      color: $color-success;
-    }
-
+    .summary-case__icon,
     .summary-case__score {
       color: $color-success;
     }
   }
 
   &--wrong {
-    // border-left: 3px solid $color-danger;
-
-    .summary-case__icon {
-      color: $color-danger;
-    }
-
+    .summary-case__icon,
     .summary-case__score {
       color: $color-danger;
     }
