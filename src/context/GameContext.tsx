@@ -54,8 +54,33 @@ const initialState: GameState = {
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case 'START_GAME':
-      return { ...initialState, screen: 'game', roundStartTime: Date.now() }
+    case 'START_GAME': {
+      // Om alla 10 redan är avklarade — börja om från noll.
+      // Annars hoppa till nästa olösta case (resume efter avhopp till start).
+      const allDone = CASES.every((c) =>
+        state.results.find((r) => r.caseId === c.id)
+      )
+      if (allDone) {
+        return { ...initialState, screen: 'game', roundStartTime: Date.now() }
+      }
+      const nextIndex = CASES.findIndex(
+        (c) => !state.results.find((r) => r.caseId === c.id)
+      )
+      return {
+        ...state,
+        screen: 'game',
+        currentCaseIndex: nextIndex === -1 ? 0 : nextIndex,
+        phase: 'classifying',
+        selectedClassification: null,
+        selectedClueIds: [],
+        roundStartTime: Date.now(),
+      }
+    }
+
+    case 'EXIT_TO_START':
+      // Lämna spelet till startskärmen utan att rensa progress —
+      // användaren kan komma tillbaka och fortsätta från nästa olösta case.
+      return { ...state, screen: 'start' }
 
     case 'SELECT_CLASSIFICATION':
       return {
@@ -119,9 +144,30 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'NEXT_CASE': {
-      const nextIndex = state.currentCaseIndex + 1
-      if (nextIndex >= CASES.length) {
+      // Om alla 10 är besvarade — gå direkt till summary, oavsett vilken
+      // case-position vi råkar vara på. Hanterar fallet då sista olösta
+      // case besvaras mitt i ordningen.
+      const allDone = CASES.every((c) =>
+        state.results.find((r) => r.caseId === c.id)
+      )
+      if (allDone) {
         return { ...state, screen: 'summary', phase: 'complete' }
+      }
+      // Hoppa till nästa case som ännu inte är besvarat (skippa de som
+      // redan har en result-entry).
+      let nextIndex = state.currentCaseIndex + 1
+      while (
+        nextIndex < CASES.length &&
+        state.results.find((r) => r.caseId === CASES[nextIndex].id)
+      ) {
+        nextIndex++
+      }
+      // Om vi gått past slutet utan att hitta en olöst — wrappa runt och
+      // ta första olösta från början.
+      if (nextIndex >= CASES.length) {
+        nextIndex = CASES.findIndex(
+          (c) => !state.results.find((r) => r.caseId === c.id)
+        )
       }
       return {
         ...state,
@@ -178,6 +224,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (state.screen === 'summary' && !savedRef.current) {
+      // Bara räkna omgången som slutförd om alla 10 case faktiskt är besvarade.
+      // Förhindrar att hopp förbi case via header-navigeringen ger spelet en falsk
+      // "klart"-stämpel i player-stats.
+      const allDone = CASES.every((c) =>
+        state.results.find((r) => r.caseId === c.id)
+      )
+      if (!allDone) return
+
       savedRef.current = true
       const existing = load('stats', DEFAULT_STATS) as PlayerStats
       const gameCorrect = state.results.filter(r => r.isCorrect).length

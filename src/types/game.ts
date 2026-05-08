@@ -93,4 +93,5 @@ export type GameAction =
   | { type: "SUBMIT_CASE" }
   | { type: "NEXT_CASE" }
   | { type: "PREV_CASE" }
+  | { type: "EXIT_TO_START" }
   | { type: "RESTART" };

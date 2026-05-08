@@ -774,12 +774,23 @@ export default function GamePage() {
   const currentCase = CASES[state.currentCaseIndex];
   const currentArticle = articles[currentCase.id];
   const lastResult = state.results[state.results.length - 1];
-  const isLastCase = state.currentCaseIndex === CASES.length - 1;
+  // "Sista" innebär: alla case är besvarade (inklusive nuvarande efter submit).
+  // Då ska feedback-overlayens knapp säga "SE RESULTAT" istället för "NÄSTA FALL".
+  const isLastCase = CASES.every((c) =>
+    state.results.find((r) => r.caseId === c.id),
+  );
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
   const [showUrlInspect, setShowUrlInspect] = useState(false);
 
   const currentHint =
     SOURCE_CRITIC_HINTS[state.currentCaseIndex % SOURCE_CRITIC_HINTS.length];
+
+  // Status per case för paginerings-pluppar i headern
+  const caseStatuses = CASES.map((c) => {
+    const result = state.results.find((r) => r.caseId === c.id);
+    if (!result) return undefined;
+    return result.isCorrect ? ("correct" as const) : ("wrong" as const);
+  });
 
   useEffect(() => {
     setShowImageAnalysis(false);
@@ -803,9 +814,10 @@ export default function GamePage() {
         showGameNavigation
         currentCaseIndex={state.currentCaseIndex}
         totalCases={CASES.length}
+        caseStatuses={caseStatuses}
         experience={(load("stats", DEFAULT_STATS) as PlayerStats).totalScore + state.score}
         streak={state.streak}
-        onLogoClick={() => dispatch({ type: "RESTART" })}
+        onLogoClick={() => dispatch({ type: "EXIT_TO_START" })}
         onPrevious={() => dispatch({ type: "PREV_CASE" })}
         onNext={() => dispatch({ type: "NEXT_CASE" })}
         isPrevDisabled={state.currentCaseIndex === 0}

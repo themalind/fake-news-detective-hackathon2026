@@ -1,10 +1,13 @@
 import "./Header.scss";
 
+type CaseStatus = "correct" | "wrong" | undefined;
+
 interface HeaderProps {
   isHomePage?: boolean;
   showGameNavigation?: boolean;
   currentCaseIndex?: number;
   totalCases?: number;
+  caseStatuses?: CaseStatus[];
   experience?: number;
   streak?: number;
   onLogoClick?: () => void;
@@ -19,6 +22,7 @@ export default function Header({
   showGameNavigation = false,
   currentCaseIndex = 0,
   totalCases = 0,
+  caseStatuses = [],
   experience,
   streak,
   onLogoClick,
@@ -61,18 +65,23 @@ export default function Header({
               aria-label="Föregående fall"
             />
             <div className="header__dots" aria-hidden="true">
-              {Array.from({ length: totalCases }, (_, i) => (
-                <span
-                  key={i}
-                  className={`header__dot${
-                    i < currentCaseIndex
-                      ? " header__dot--done"
-                      : i === currentCaseIndex
-                        ? " header__dot--active"
-                        : ""
-                  }`}
-                />
-              ))}
+              {Array.from({ length: totalCases }, (_, i) => {
+                const status = caseStatuses[i];
+                const modifier =
+                  i === currentCaseIndex
+                    ? "header__dot--active"
+                    : status === "correct"
+                      ? "header__dot--correct"
+                      : status === "wrong"
+                        ? "header__dot--wrong"
+                        : "";
+                return (
+                  <span
+                    key={i}
+                    className={`header__dot${modifier ? " " + modifier : ""}`}
+                  />
+                );
+              })}
             </div>
             <button
               className="header__arrow header__arrow--next"
@@ -88,7 +97,15 @@ export default function Header({
           <div className="header__stats">
             <span className="header__score">{experience} XP</span>
             {streak !== undefined && streak > 0 && (
-              <span className="header__streak">&#128293; {streak}</span>
+              <span className="header__streak">
+                <img
+                  src="/images/StylingElements/fire1.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="header__streak-icon"
+                />
+                {streak}
+              </span>
             )}
           </div>
         ) : (

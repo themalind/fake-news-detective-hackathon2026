@@ -54,7 +54,7 @@ export default function SummaryPage() {
 
   return (
     <>
-      <Header experience={experience} onLogoClick={() => dispatch({ type: "RESTART" })} />
+      <Header experience={experience} onLogoClick={() => dispatch({ type: "EXIT_TO_START" })} />
       <main className="summary-page">
         <img
           src="/images/wallLight.png"
@@ -162,10 +162,10 @@ export default function SummaryPage() {
         </div>
 
         <div className="summary-page__actions">
-          <button className="summary-page__restart" onClick={() => dispatch({ type: "RESTART" })}>
+          <button className="summary-page__restart" onClick={() => dispatch({ type: "START_GAME" })}>
             UTRED IGEN
           </button>
-          <button className="summary-page__dashboard" onClick={() => dispatch({ type: "RESTART" })}>
+          <button className="summary-page__dashboard" onClick={() => dispatch({ type: "EXIT_TO_START" })}>
             TILL DASHBOARD
           </button>
         </div>
