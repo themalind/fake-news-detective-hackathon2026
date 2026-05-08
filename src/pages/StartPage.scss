@@ -147,14 +147,14 @@
 
   &__dashboard .player-dashboard {
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 1.35rem;
   }
 
   @media (max-height: 790px) and (min-width: 700px) {
     padding-block: 0.65rem 0.85rem;
 
     .player-dashboard {
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
       padding-block: 1.35rem;
     }
 
