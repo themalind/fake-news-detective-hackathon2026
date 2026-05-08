@@ -1,5 +1,3 @@
-import { CASES } from "../data/cases";
-import { ROUNDS } from "../data/rounds";
 import type { PlayerStats } from "../types/game";
 import { load } from "../utils/storage";
 import "./PlayerDashboard.scss";
@@ -43,10 +41,6 @@ function getRankXpLabel(score: number) {
   return `${score} / ${rank.max + 1} erfarenhet`;
 }
 
-function getRoundSlots(level: number): number {
-  return level % ROUNDS.length;
-}
-
 const DEFAULT_STATS: PlayerStats = {
   totalGames: 5,
   totalCorrect: 3,
@@ -78,7 +72,6 @@ export default function PlayerDashboard() {
     ? Math.round((stats.totalCorrect / totalPlayed) * 100)
     : null;
   const level = stats.totalCompletedRounds ?? 0;
-  const filledSlots = getRoundSlots(level);
 
   return (
     <div className="player-dashboard">
