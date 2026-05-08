@@ -11,7 +11,6 @@ import type {
   PlayerStats,
   ResearchReport,
   RoundResult,
-  ShadyLinkInfo,
 } from "../types/game";
 import Header from "../components/Header";
 import { load } from "../utils/storage";
