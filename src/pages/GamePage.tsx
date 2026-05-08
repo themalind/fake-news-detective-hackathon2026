@@ -170,7 +170,9 @@ function CaseCard({
                   aria-label="Granska bilden med omvänd bildsökning"
                 >
                   <Search size={14} strokeWidth={2.25} />
-                  Granska
+                  <span className="case-card__image-search-btn-label">
+                    Granska
+                  </span>
                 </button>
               )}
             </div>
