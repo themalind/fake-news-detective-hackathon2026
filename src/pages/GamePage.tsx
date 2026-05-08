@@ -11,7 +11,6 @@ import type {
   PlayerStats,
   ResearchReport,
   RoundResult,
-  ShadyLinkInfo,
 } from "../types/game";
 import Header from "../components/Header";
 import { load } from "../utils/storage";
@@ -883,6 +882,18 @@ function SuspiciousLinkModal({
       aria-label="Varning för misstänkt länk"
       onClick={onClose}
     >
+      <div className="suspicious-modal__bugs" aria-hidden="true">
+        {Array.from({ length: 9 }, (_, index) => (
+          <span
+            key={index}
+            className={`suspicious-modal__bug suspicious-modal__bug--${index + 1}`}
+          >
+            <span className="suspicious-modal__bug-body" />
+            <span className="suspicious-modal__bug-head" />
+            <span className="suspicious-modal__bug-legs" />
+          </span>
+        ))}
+      </div>
       <div
         className="suspicious-modal__card"
         onClick={(e) => e.stopPropagation()}
