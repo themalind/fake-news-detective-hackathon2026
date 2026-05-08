@@ -42,11 +42,11 @@ function getRankXpLabel(score: number) {
 }
 
 const DEFAULT_STATS: PlayerStats = {
-  totalGames: 5,
-  totalCorrect: 3,
-  totalFooled: 4,
+  totalGames: 1,
+  totalCorrect: 2,
+  totalFooled: 1,
   totalEvidenceFound: 9,
-  bestStreak: 3,
+  bestStreak: 2,
   lastStreak: 2,
   totalScore: 450,
   badges: ["forsta-fallet", "streakjagaren", "bevissamlaren", "skarpskytten", "veteranen"],
