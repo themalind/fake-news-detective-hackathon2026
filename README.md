@@ -10,12 +10,12 @@ Spelaren läser artiklar och sociala medieinlägg och analyserar innehållet fö
 
 ## Skärmdumpar
 
-| Startsida | Spelsidan |
-|:---------:|:---------:|
+|                Startsida                |               Spelsidan                |
+| :-------------------------------------: | :------------------------------------: |
 | ![Startsida](screenshots/startPage.png) | ![Spelsidan](screenshots/gamePage.png) |
 
-| Bevissektion | Sammanfattning |
-|:------------:|:--------------:|
+|                   Bevissektion                   |                 Sammanfattning                 |
+| :----------------------------------------------: | :--------------------------------------------: |
 | ![Bevissektion](screenshots/evidenceSection.png) | ![Sammanfattning](screenshots/summaryPage.png) |
 
 ## Funktioner
@@ -89,7 +89,3 @@ npm run dev
 - Tidsbegränsade uppdrag
 - Multiplayer-läge
 - AI-genererade artiklar
-
-## Licens
-
-Detta projekt är utvecklat i utbildningssyfte.
