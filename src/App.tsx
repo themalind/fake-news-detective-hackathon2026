@@ -3,7 +3,6 @@ import StartPage from './pages/StartPage'
 import RoundIntroPage from './pages/RoundIntroPage'
 import GamePage from './pages/GamePage'
 import RoundSummaryPage from './pages/RoundSummaryPage'
-import SummaryPage from './pages/SummaryPage'
 
 function AppScreens() {
   const { state, dispatch } = useGame()
@@ -17,10 +16,7 @@ function AppScreens() {
   if (state.screen === 'game') {
     return <GamePage />
   }
-  if (state.screen === 'round-summary') {
-    return <RoundSummaryPage />
-  }
-  return <SummaryPage />
+  return <RoundSummaryPage />
 }
 
 export default function App() {

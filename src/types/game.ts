@@ -4,7 +4,7 @@ export type GamePhase = "classifying" | "investigating" | "feedback" | "complete
 
 export type CaseType = "headline" | "social-post" | "article" | "image-post";
 
-export type Screen = "start" | "round-intro" | "game" | "round-summary" | "summary";
+export type Screen = "start" | "round-intro" | "game" | "round-summary";
 
 // ---------- Case data ----------
 

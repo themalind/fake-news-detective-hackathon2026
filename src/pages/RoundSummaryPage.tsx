@@ -18,6 +18,18 @@ const DEFAULT_STATS: PlayerStats = {
   totalCompletedRounds: 0,
 };
 
+function getRank(score: number): string {
+  if (score >= 30000) return "Legendär Faktagranskare";
+  if (score >= 20000) return "Sanningens väktare";
+  if (score >= 12000) return "Mästerspion";
+  if (score >= 7500) return "Elitdetektiv";
+  if (score >= 4500) return "Chefdetektiv";
+  if (score >= 2500) return "Desinformationsdetektiv";
+  if (score >= 1200) return "Rubrikjägare";
+  if (score >= 500) return "Nyhetsgranskare";
+  return "Junior Skeptiker";
+}
+
 export default function RoundSummaryPage() {
   const { state, dispatch } = useGame();
   const round = ROUNDS[state.currentRoundIndex];
@@ -36,6 +48,115 @@ export default function RoundSummaryPage() {
   const experience =
     (load("stats", DEFAULT_STATS) as PlayerStats).totalScore + state.score;
 
+  if (isLastRound) {
+    const allCorrect = state.results.filter((r) => r.isCorrect);
+    const allWrong = state.results.filter((r) => !r.isCorrect);
+    const totalAccuracy =
+      state.results.length > 0
+        ? Math.round((allCorrect.length / state.results.length) * 100)
+        : 0;
+
+    return (
+      <div className="round-summary">
+        <div className="round-summary__card round-summary__card--final">
+          <span className="round-summary__badge">Alla rundor klara!</span>
+          <h1 className="round-summary__rank">{getRank(state.score)}</h1>
+          <p className="round-summary__final-score">{state.score} XP</p>
+
+          <div className="round-summary__stats">
+            <div className="round-summary__stat">
+              <div className="round-summary__stat-row">
+                <img src="/images/StylingElements/check.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+                <span className="round-summary__stat-value">
+                  {allCorrect.length}/{state.results.length}
+                </span>
+              </div>
+              <span className="round-summary__stat-label">Fall lösta</span>
+            </div>
+            <div className="round-summary__stat">
+              <div className="round-summary__stat-row">
+                <img src="/images/StylingElements/dartboard.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+                <span className="round-summary__stat-value">{totalAccuracy}%</span>
+              </div>
+              <span className="round-summary__stat-label">Träffsäkerhet</span>
+            </div>
+            <div className="round-summary__stat">
+              <div className="round-summary__stat-row">
+                <img src="/images/StylingElements/fire1.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+                <span className="round-summary__stat-value">{state.maxStreak}</span>
+              </div>
+              <span className="round-summary__stat-label">Bästa streak</span>
+            </div>
+          </div>
+
+          {(allCorrect.length > 0 || allWrong.length > 0) && (
+            <div className="round-summary__case-groups">
+              {allCorrect.length > 0 && (
+                <div>
+                  <h3 className="round-summary__cases-heading round-summary__cases-heading--correct">
+                    Lösta fall
+                  </h3>
+                  <ul className="round-summary__cases">
+                    {allCorrect.map((result) => {
+                      const c = CASES.find((cas) => cas.id === result.caseId);
+                      return (
+                        <li
+                          key={result.caseId}
+                          className="round-summary__case round-summary__case--correct"
+                        >
+                          <span className="round-summary__case-icon">✓</span>
+                          <span className="round-summary__case-headline">{c?.headline}</span>
+                          <span className="round-summary__case-score">+{result.scoreGained} XP</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+              {allWrong.length > 0 && (
+                <div>
+                  <h3 className="round-summary__cases-heading round-summary__cases-heading--wrong">
+                    Missade fall
+                  </h3>
+                  <ul className="round-summary__cases">
+                    {allWrong.map((result) => {
+                      const c = CASES.find((cas) => cas.id === result.caseId);
+                      return (
+                        <li
+                          key={result.caseId}
+                          className="round-summary__case round-summary__case--wrong"
+                        >
+                          <span className="round-summary__case-icon">✗</span>
+                          <span className="round-summary__case-headline">{c?.headline}</span>
+                          <span className="round-summary__case-score">{result.scoreGained} XP</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="round-summary__actions round-summary__actions--row">
+            <button
+              className="round-summary__next-btn"
+              onClick={() => dispatch({ type: "START_GAME" })}
+            >
+              UTRED IGEN
+            </button>
+            <button
+              className="round-summary__dashboard-btn"
+              onClick={() => dispatch({ type: "EXIT_TO_START" })}
+            >
+              Till dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="round-summary">
       <div className="round-summary__card">
@@ -47,20 +168,29 @@ export default function RoundSummaryPage() {
 
         <div className="round-summary__stats">
           <div className="round-summary__stat">
-            <span className="round-summary__stat-value">
-              {correctCount}/{roundResults.length}
-            </span>
+            <div className="round-summary__stat-row">
+              <img src="/images/StylingElements/check.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+              <span className="round-summary__stat-value">
+                {correctCount}/{roundResults.length}
+              </span>
+            </div>
             <span className="round-summary__stat-label">Fall lösta</span>
           </div>
           <div className="round-summary__stat">
-            <span className="round-summary__stat-value">{accuracy}%</span>
+            <div className="round-summary__stat-row">
+              <img src="/images/StylingElements/dartboard.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+              <span className="round-summary__stat-value">{accuracy}%</span>
+            </div>
             <span className="round-summary__stat-label">Träffsäkerhet</span>
           </div>
           <div className="round-summary__stat">
-            <span className="round-summary__stat-value">
-              {roundScore >= 0 ? "+" : ""}
-              {roundScore}
-            </span>
+            <div className="round-summary__stat-row">
+              <img src="/images/StylingElements/fire1.png" alt="" aria-hidden="true" className="round-summary__stat-icon" />
+              <span className="round-summary__stat-value">
+                {roundScore >= 0 ? "+" : ""}
+                {roundScore}
+              </span>
+            </div>
             <span className="round-summary__stat-label">XP denna runda</span>
           </div>
         </div>
@@ -98,13 +228,9 @@ export default function RoundSummaryPage() {
             className="round-summary__next-btn"
             onClick={() => dispatch({ type: "NEXT_ROUND" })}
           >
-            {isLastRound ? (
-              "Se slutresultat"
-            ) : (
-              <>
-                Nästa runda <ArrowRight size={16} strokeWidth={2.5} />
-              </>
-            )}
+            <>
+              Nästa runda <ArrowRight size={16} strokeWidth={2.5} />
+            </>
           </button>
           <button
             className="round-summary__dashboard-btn"

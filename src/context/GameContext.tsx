@@ -129,7 +129,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'NEXT_ROUND': {
       const nextRoundIndex = state.currentRoundIndex + 1
       if (nextRoundIndex >= ROUNDS.length) {
-        return { ...state, screen: 'summary', phase: 'complete' }
+        return { ...state, screen: 'start', phase: 'complete' }
       }
       return {
         ...state,
@@ -279,32 +279,10 @@ const DEFAULT_STATS: PlayerStats = {
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState)
-  const savedRef = useRef(false)
   const lastSavedRoundRef = useRef(-1)
 
   useEffect(() => {
-    if (state.screen === 'summary' && !savedRef.current) {
-      const allCaseIds = ROUNDS.flatMap(r => r.caseIds)
-      const allDone = allCaseIds.every(id =>
-        state.results.find(r => r.caseId === id)
-      )
-      if (!allDone) return
-
-      savedRef.current = true
-      const existing = load('stats', DEFAULT_STATS) as PlayerStats
-      const newTotalGames = existing.totalGames + 1
-
-      const badges = [...existing.badges]
-      const earn = (id: string) => { if (!badges.includes(id)) badges.push(id) }
-      if (newTotalGames >= 5) earn('veteranen')
-      // skarpskytten: 80% rätt av totalt spelade fall
-      const totalPlayed = existing.totalCorrect + existing.totalFooled
-      if (newTotalGames >= 5 && totalPlayed > 0 && existing.totalCorrect / totalPlayed >= 0.8) earn('skarpskytten')
-
-      save('stats', { ...existing, totalGames: newTotalGames, badges })
-    }
     if (state.screen === 'start') {
-      savedRef.current = false
       lastSavedRoundRef.current = -1
     }
   }, [state.screen])
@@ -314,6 +292,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (lastSavedRoundRef.current === state.currentRoundIndex) return
     lastSavedRoundRef.current = state.currentRoundIndex
 
+    const isLastRound = state.currentRoundIndex === ROUNDS.length - 1
     const roundCaseIds = ROUNDS[state.currentRoundIndex].caseIds
     const roundResults = state.results.filter(r => roundCaseIds.includes(r.caseId))
     const roundCorrect = roundResults.filter(r => r.isCorrect).length
@@ -326,15 +305,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const newTotalEvidenceFound = existing.totalEvidenceFound + roundEvidence
     const newBestStreak = Math.max(existing.bestStreak, state.maxStreak)
     const newTotalCompletedRounds = (existing.totalCompletedRounds ?? 0) + 1
+    const newTotalGames = isLastRound ? existing.totalGames + 1 : existing.totalGames
 
     const badges = [...existing.badges]
     const earn = (id: string) => { if (!badges.includes(id)) badges.push(id) }
     earn('forsta-fallet')
     if (newBestStreak >= 3) earn('streakjagaren')
     if (newTotalEvidenceFound >= 15) earn('bevissamlaren')
+    if (isLastRound) {
+      if (newTotalGames >= 5) earn('veteranen')
+      const totalPlayed = existing.totalCorrect + existing.totalFooled
+      if (newTotalGames >= 5 && totalPlayed > 0 && existing.totalCorrect / totalPlayed >= 0.8) earn('skarpskytten')
+    }
 
     save('stats', {
       ...existing,
+      totalGames: newTotalGames,
       totalCorrect: newTotalCorrect,
       totalFooled: existing.totalFooled + roundFooled,
       totalEvidenceFound: newTotalEvidenceFound,
