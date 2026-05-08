@@ -4,6 +4,8 @@
 export type Hint = {
   title: string;
   body: string;
+  /** Valfri klickbar extern resurs — visar full URL på hover */
+  link?: { url: string; label: string };
 };
 
 export const SOURCE_CRITIC_HINTS: Hint[] = [
@@ -108,10 +110,69 @@ export const URL_INSPECT_TIPS: Hint[] = [
   },
 ];
 
-// Kombinerad lista som rullas i HintCard:n. URL-tipsen gör sig bra som
-// allmänna detektivtips också, även om de fortfarande visas separat i
-// URL-inspect-modalen för fokuserad URL-granskning.
-export const DETECTIVE_HINTS: Hint[] = [
+// Externa resurser för fördjupning i källkritik. Rubriken är gemensam så
+// spelaren känner igen typen direkt.
+const RELATED_RESOURCES_BODY =
+  'Glöm inte: hovra över länken INNAN du klickar — då ser du i webbläsarens nedre kant vart den faktiskt leder.';
+
+export const RELATED_LINKS: Hint[] = [
+  {
+    title: 'Relaterad länk',
+    body: RELATED_RESOURCES_BODY,
+    link: {
+      url: 'https://internetkunskap.se/kallkritik/',
+      label: 'Internetkunskap.se — Källkritik',
+    },
+  },
+  {
+    title: 'Relaterad länk',
+    body: RELATED_RESOURCES_BODY,
+    link: {
+      url: 'https://urplay.se/bladdra/kallkritik',
+      label: 'UR Play — Källkritik (samling)',
+    },
+  },
+  {
+    title: 'Relaterad länk',
+    body: RELATED_RESOURCES_BODY,
+    link: {
+      url: 'https://urplay.se/serie/191021-kallkritik',
+      label: 'UR Play — Källkritik (TV-serie)',
+    },
+  },
+  {
+    title: 'Relaterad länk',
+    body: RELATED_RESOURCES_BODY,
+    link: {
+      url: 'https://sakerhetskollen.se/sakerhetsguider/stoppa-fake-news-med-kallkritik',
+      label: 'Säkerhetskollen — Stoppa fake news',
+    },
+  },
+  {
+    title: 'Relaterad länk',
+    body: RELATED_RESOURCES_BODY,
+    link: {
+      url: 'https://kallkritikbyran.se/',
+      label: 'Källkritikbyrån',
+    },
+  },
+];
+
+// Fisher-Yates-style shuffle så ordningen blir slumpad mellan sessioner —
+// annars hamnar URL-tipsen och relaterade länkar alltid efter de källkritiska.
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// Kombinerad och blandad lista som rullas i HintCard:n. URL_INSPECT_TIPS
+// behålls separat för URL-inspect-modalen.
+export const DETECTIVE_HINTS: Hint[] = shuffle([
   ...SOURCE_CRITIC_HINTS,
   ...URL_INSPECT_TIPS,
-];
+  ...RELATED_LINKS,
+]);

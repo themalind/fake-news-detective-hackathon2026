@@ -1500,6 +1500,32 @@
     color: $color-text-muted;
   }
 
+  // Klickbar extern länk (för "Relaterad länk"-tipsen).
+  // title-attr ger browser-native tooltip med full URL vid hover.
+  &__link {
+    display: inline-block;
+    margin: 0.25rem 0 0;
+    padding: 0.4rem 0.65rem;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.4);
+    border-radius: $radius-sm;
+    color: $color-primary;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: rgba(201, 162, 39, 0.2);
+      border-color: $color-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
   &__footer {
     margin: 0.4rem 0 0;
     padding-top: 0.7rem;

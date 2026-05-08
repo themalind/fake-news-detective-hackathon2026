@@ -579,7 +579,11 @@ function HintCard({
   index,
   onIndexChange,
 }: {
-  hints: { title: string; body: string }[];
+  hints: {
+    title: string;
+    body: string;
+    link?: { url: string; label: string };
+  }[];
   index: number;
   onIndexChange: (next: number) => void;
 }) {
@@ -606,6 +610,17 @@ function HintCard({
       </div>
       <h3 className="hint-card__title">{hint.title}</h3>
       <p className="hint-card__body">{hint.body}</p>
+      {hint.link && (
+        <a
+          className="hint-card__link"
+          href={hint.link.url}
+          title={hint.link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {hint.link.label} ↗
+        </a>
+      )}
       <p className="hint-card__footer">
         Välj en klassificering för att börja samla bevis.
       </p>
