@@ -149,7 +149,7 @@ export default function RoundSummaryPage() {
               className="round-summary__dashboard-btn"
               onClick={() => dispatch({ type: "EXIT_TO_START" })}
             >
-              Till dashboard
+              TILL DASHBOARD
             </button>
           </div>
         </div>
@@ -229,14 +229,14 @@ export default function RoundSummaryPage() {
             onClick={() => dispatch({ type: "NEXT_ROUND" })}
           >
             <>
-              Nästa runda <ArrowRight size={16} strokeWidth={2.5} />
+              NÄSTA RUNDA<ArrowRight size={16} strokeWidth={2.5} />
             </>
           </button>
           <button
             className="round-summary__dashboard-btn"
             onClick={() => dispatch({ type: "EXIT_TO_START" })}
           >
-            Till dashboard
+            TILL DASHBOARD
           </button>
         </div>
       </div>

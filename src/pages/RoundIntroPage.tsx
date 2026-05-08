@@ -1,6 +1,6 @@
+import { ArrowRight } from "lucide-react";
 import { useGame } from "../context/GameContext";
 import { ROUNDS } from "../data/rounds";
-import { ArrowRight } from "lucide-react";
 import "./RoundIntroPage.scss";
 
 export default function RoundIntroPage() {
@@ -34,13 +34,13 @@ export default function RoundIntroPage() {
             className="round-intro__start-btn"
             onClick={() => dispatch({ type: "START_ROUND" })}
           >
-            Starta runda {round.number} <ArrowRight size={18} strokeWidth={2.5} />
+            STARTA RUNDA {round.number} <ArrowRight size={18} strokeWidth={2.5} />
           </button>
           <button
             className="round-intro__back-btn"
             onClick={() => dispatch({ type: "EXIT_TO_START" })}
           >
-            Till dashboard
+            TILL DASHBOARD
           </button>
         </div>
       </div>
