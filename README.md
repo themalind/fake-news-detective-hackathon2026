@@ -8,6 +8,16 @@ Fake News Detective är en React-webapp där spelaren tränar på att identifier
 
 Spelaren läser artiklar och sociala medieinlägg och analyserar innehållet för att hitta varningssignaler. Genom att klassificera rätt och välja relevanta bevis samlar spelaren XP, klättrar i detektivranken och låser upp badges.
 
+## Skärmdumpar
+
+| Startsida | Spelsidan |
+|:---------:|:---------:|
+| ![Startsida](screenshots/startPage.png) | ![Spelsidan](screenshots/gamePage.png) |
+
+| Bevissektion | Sammanfattning |
+|:------------:|:--------------:|
+| ![Bevissektion](screenshots/evidenceSection.png) | ![Sammanfattning](screenshots/summaryPage.png) |
+
 ## Funktioner
 
 - Läs och analysera 10 fall — artiklar, rubriker, bildposter och sociala medieinlägg
