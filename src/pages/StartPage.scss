@@ -196,12 +196,12 @@
     animation: wall-light-flicker 4s infinite;
 
     &--left {
-      left: clamp(1rem, 6vw, 5rem);
+      left: clamp(1.5rem, 9vw, 8rem);
       animation-duration: 3.7s;
     }
 
     &--right {
-      right: clamp(1rem, 6vw, 5rem);
+      right: clamp(1.5rem, 9vw, 8rem);
       transform: translateY(-50%) scaleX(-1);
       animation-duration: 4.3s;
     }
