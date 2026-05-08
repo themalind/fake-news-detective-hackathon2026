@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGame } from "../context/GameContext";
 import { CASES } from "../data/cases";
-import { SOURCE_CRITIC_HINTS, URL_INSPECT_TIPS } from "../data/hints";
+import { DETECTIVE_HINTS, URL_INSPECT_TIPS } from "../data/hints";
 import type {
   Case,
   Classification,
@@ -549,10 +549,36 @@ function LockInfoPopover({
   );
 }
 
-function HintCard({ hint }: { hint: { title: string; body: string } }) {
+function HintCard({
+  hints,
+  index,
+  onIndexChange,
+}: {
+  hints: { title: string; body: string }[];
+  index: number;
+  onIndexChange: (next: number) => void;
+}) {
+  const hint = hints[index];
+  const prev = () => onIndexChange((index - 1 + hints.length) % hints.length);
+  const next = () => onIndexChange((index + 1) % hints.length);
+
   return (
     <aside className="hint-card" aria-label="Detektivtips">
-      <div className="hint-card__badge">Detektivtips</div>
+      <div className="hint-card__header">
+        <button
+          type="button"
+          className="hint-card__nav hint-card__nav--prev"
+          onClick={prev}
+          aria-label="Föregående tips"
+        />
+        <span className="hint-card__badge">Detektivtips</span>
+        <button
+          type="button"
+          className="hint-card__nav hint-card__nav--next"
+          onClick={next}
+          aria-label="Nästa tips"
+        />
+      </div>
       <h3 className="hint-card__title">{hint.title}</h3>
       <p className="hint-card__body">{hint.body}</p>
       <p className="hint-card__footer">
@@ -782,8 +808,17 @@ export default function GamePage() {
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
   const [showUrlInspect, setShowUrlInspect] = useState(false);
 
-  const currentHint =
-    SOURCE_CRITIC_HINTS[state.currentCaseIndex % SOURCE_CRITIC_HINTS.length];
+  // Detektivtips: stegas fram automatiskt varje gång användaren byter case,
+  // men man kan också manuellt bläddra med chevron-pilarna och fortsätta
+  // därifrån vid nästa case-byte.
+  const [hintIndex, setHintIndex] = useState(0);
+  const lastSeenCaseIndex = useRef(state.currentCaseIndex);
+  useEffect(() => {
+    if (lastSeenCaseIndex.current !== state.currentCaseIndex) {
+      lastSeenCaseIndex.current = state.currentCaseIndex;
+      setHintIndex((i) => (i + 1) % DETECTIVE_HINTS.length);
+    }
+  }, [state.currentCaseIndex]);
 
   // Status per case för paginerings-pluppar i headern
   const caseStatuses = CASES.map((c) => {
@@ -798,14 +833,17 @@ export default function GamePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [state.currentCaseIndex]);
 
-  // Scrolla ned till bevis-sektionen när användaren tryckt på klassificeraknapp
+  // Scrolla ned till bevis-sektionen när användaren tryckt på klassificera.
+  // Liten fördröjning så stamp-slap-animationen (0.25s) hinner spelas upp först.
   useEffect(() => {
-    if (state.phase === "investigating") {
+    if (state.phase !== "investigating") return;
+    const timer = setTimeout(() => {
       document.querySelector(".evidence-panel")?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
-    }
+    }, 200);
+    return () => clearTimeout(timer);
   }, [state.phase]);
 
   return (
@@ -901,7 +939,11 @@ export default function GamePage() {
               </div>
             </section>
 
-            <HintCard hint={currentHint} />
+            <HintCard
+              hints={DETECTIVE_HINTS}
+              index={hintIndex}
+              onIndexChange={setHintIndex}
+            />
           </aside>
         </div>
       </div>

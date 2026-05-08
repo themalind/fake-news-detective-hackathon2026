@@ -1426,14 +1426,61 @@
   flex-direction: column;
   gap: 0.55rem;
 
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 8px;
+  }
+
+  &__nav {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: background 0.15s;
+    flex-shrink: 0;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-top: 2px solid $color-primary;
+      border-right: 2px solid $color-primary;
+    }
+
+    &--prev::before {
+      transform: translateX(1px) rotate(-135deg);
+    }
+
+    &--next::before {
+      transform: translateX(-1px) rotate(45deg);
+    }
+
+    &:hover {
+      background: $color-primary-dim;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
   &__badge {
+    flex: 1;
     font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0.18em;
     color: $color-primary;
     text-transform: uppercase;
     text-align: center;
-    padding-bottom: 8px;
   }
 
   &__title {

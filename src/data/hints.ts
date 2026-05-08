@@ -47,6 +47,34 @@ export const SOURCE_CRITIC_HINTS: Hint[] = [
     title: 'Rubrik vs innehåll',
     body: 'Ibland är texten korrekt — men rubriken är pumpad. Läs hela artikeln innan du dömer av, och jämför vad som faktiskt står med vad rubriken lovar.',
   },
+  {
+    title: 'Tre-källor-regeln',
+    body: 'Trovärdig fakta bekräftas oftast av flera oberoende källor. Hittar du bara en — och den är okänd — vänta med att dela.',
+  },
+  {
+    title: 'Åsikt eller nyhet?',
+    body: 'Skiljer artikeln på saklig rapport och författarens åsikt? "Enligt SCB" är en nyhet. "Det här är skandalöst" är en åsikt.',
+  },
+  {
+    title: 'Anatomi i AI-bilder',
+    body: 'AI-bilder fastnar ofta på fingrar, ögon, tänder och text i bakgrunden. Räkna fingrar, kolla ögonens spegelbild och leta efter mjuka övergångar.',
+  },
+  {
+    title: 'Filterbubblan',
+    body: 'Om alla i ditt flöde säger samma sak — kolla om det är ett eko av algoritmen snarare än en bred bekräftelse i verkligheten.',
+  },
+  {
+    title: 'Klickbete-rubrik?',
+    body: 'Extrema rubriker som "Det här CHOCKAR experterna" är klassiska klickbeten (eng: "Clickbait") — rubriker designade för att kittla nyfikenheten utan att leverera substans. Hela poängen är att du klickar och i många fall utsatt för marknadsföring; sanningshalten är sekundär.',
+  },
+  {
+    title: 'Produkt i fokus = vinklat',
+    body: 'Pekar artikeln på en specifik produkt eller ett varumärke som "lösningen"? Riktig nyhetsrapportering är opartisk. Vinklade texter kallas ofta annonsbilagor, native ads eller sponsrat innehåll — leta efter den lilla märkningen.',
+  },
+  {
+    title: 'Algoritmen jagar dina känslor',
+    body: 'Plattformar samlar data om vad som får dig att stanna kvar. Innehåll som triggar ilska, rädsla eller chock prioriteras eftersom det engagerar — inte för att det stämmer. Förutsätt att info från okända källor är vinklad tills du kan bekräfta den någon annanstans.',
+  },
 ];
 
 export const URL_INSPECT_TIPS: Hint[] = [
@@ -78,4 +106,12 @@ export const URL_INSPECT_TIPS: Hint[] = [
     title: 'Hur gammal är domänen?',
     body: 'Många desinfo-sajter är registrerade nyligen. En whois-koll kan visa registreringsdatum — bara dagar/veckor gammalt är en varningsflagga.',
   },
+];
+
+// Kombinerad lista som rullas i HintCard:n. URL-tipsen gör sig bra som
+// allmänna detektivtips också, även om de fortfarande visas separat i
+// URL-inspect-modalen för fokuserad URL-granskning.
+export const DETECTIVE_HINTS: Hint[] = [
+  ...SOURCE_CRITIC_HINTS,
+  ...URL_INSPECT_TIPS,
 ];
