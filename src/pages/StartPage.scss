@@ -10,12 +10,12 @@
 .start-page {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: safe center;
-  padding: 1.25rem 2rem 1.5rem;
+  padding: 1rem 2rem 1.15rem;
   text-align: center;
   position: relative;
   background: transparent;
@@ -105,7 +105,7 @@
 
   &__button {
     cursor: pointer;
-    padding: 0.9rem 2.75rem;
+    padding: 0.8rem 2.6rem;
     background: $color-primary;
     color: $color-button-text;
     border: none;
@@ -134,21 +134,55 @@
   }
 
   &__hint {
-    margin-top: 0.9rem;
+    margin-top: 0.65rem;
     font-size: 0.85rem;
     color: $color-text-muted;
   }
 
-  @media (max-height: 760px) and (min-width: 700px) {
-    padding-block: 0.75rem 1rem;
+  &__dashboard {
+    width: min(100%, 820px);
+    display: flex;
+    justify-content: center;
+  }
+
+  &__dashboard .player-dashboard {
+    width: 100%;
+    margin-bottom: 1.35rem;
+  }
+
+  @media (max-height: 790px) and (min-width: 700px) {
+    padding-block: 0.65rem 0.85rem;
 
     .player-dashboard {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
+      padding-block: 1.35rem;
+    }
+
+    .player-dashboard__dossier {
+      margin-bottom: 0.8rem;
+    }
+
+    .player-dashboard__top {
+      padding-bottom: 0.75rem;
+    }
+
+    .player-dashboard__level,
+    .player-dashboard__investigation {
+      padding-block: 0.75rem;
+    }
+
+    .player-dashboard__badges {
+      padding-top: 0.75rem;
+      gap: 0.55rem;
     }
 
     &__hint {
-      margin-top: 0.6rem;
+      margin-top: 0.45rem;
     }
+  }
+
+  @media (max-height: 680px), (max-width: 699px) {
+    overflow-y: auto;
   }
 
   &__wall-light {
@@ -162,17 +196,17 @@
     animation: wall-light-flicker 4s infinite;
 
     &--left {
-      left: 14vw;
+      left: clamp(1.5rem, 9vw, 8rem);
       animation-duration: 3.7s;
     }
 
     &--right {
-      right: 14vw;
+      right: clamp(1.5rem, 9vw, 8rem);
       transform: translateY(-50%) scaleX(-1);
       animation-duration: 4.3s;
     }
 
-    @media (min-width: 900px) {
+    @media (min-width: 1200px) {
       display: block;
     }
   }

@@ -4,7 +4,7 @@ export type GamePhase = "classifying" | "investigating" | "feedback" | "complete
 
 export type CaseType = "headline" | "social-post" | "article" | "image-post";
 
-export type Screen = "start" | "game" | "summary";
+export type Screen = "start" | "round-intro" | "game" | "round-summary";
 
 // ---------- Case data ----------
 
@@ -98,6 +98,7 @@ export interface RoundResult {
 
 export interface GameState {
   screen: Screen;
+  currentRoundIndex: number;
   currentCaseIndex: number;
   score: number;
   streak: number;
@@ -120,12 +121,15 @@ export interface PlayerStats {
   lastStreak: number;
   totalScore: number;
   badges: string[];
+  totalCompletedRounds: number;
 }
 
 // ---------- Reducer actions ----------
 
 export type GameAction =
   | { type: "START_GAME" }
+  | { type: "START_ROUND" }
+  | { type: "NEXT_ROUND" }
   | { type: "SELECT_CLASSIFICATION"; classification: Classification }
   | { type: "TOGGLE_CLUE"; clueId: string }
   | { type: "SUBMIT_CASE" }

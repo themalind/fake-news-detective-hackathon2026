@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useGame } from "../context/GameContext";
 import { CASES } from "../data/cases";
+import { ROUNDS } from "../data/rounds";
 import { DETECTIVE_HINTS, URL_INSPECT_TIPS } from "../data/hints";
 import type {
   ArticleLink,
@@ -26,6 +27,7 @@ const DEFAULT_STATS: PlayerStats = {
   lastStreak: 0,
   totalScore: 0,
   badges: [],
+  totalCompletedRounds: 0,
 };
 
 interface ArticleContent {
@@ -1092,7 +1094,7 @@ function FeedbackOverlay({
             "STÄNG"
           ) : (
             <>
-              {isLastCase ? "SE RESULTAT" : "NÄSTA FALL"}{" "}
+              {isLastCase ? "RUNDAN KLAR" : "NÄSTA FALL"}{" "}
               <ArrowRight size={16} strokeWidth={2.5} />
             </>
           )}
@@ -1110,11 +1112,13 @@ export default function GamePage() {
   const currentCase = CASES[state.currentCaseIndex];
   const currentArticle = articles[currentCase.id];
   const lastResult = state.results[state.results.length - 1];
-  // "Sista" innebär: alla case är besvarade (inklusive nuvarande efter submit).
-  // Då ska feedback-overlayens knapp säga "SE RESULTAT" istället för "NÄSTA FALL".
-  const isLastCase = CASES.every((c) =>
-    state.results.find((r) => r.caseId === c.id),
+  const currentRound = ROUNDS[state.currentRoundIndex];
+  // "Sista i rundan" innebär: alla case i aktuell runda är besvarade.
+  // Då ska feedback-overlayens knapp säga "RUNDAN KLAR".
+  const isLastCase = currentRound.caseIds.every((id) =>
+    state.results.find((r) => r.caseId === id),
   );
+  const posInRound = currentRound.caseIds.indexOf(currentCase.id);
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
   const [showUrlInspect, setShowUrlInspect] = useState(false);
   const [showFacit, setShowFacit] = useState(false);
@@ -1144,9 +1148,9 @@ export default function GamePage() {
     }
   }, [state.currentCaseIndex]);
 
-  // Status per case för paginerings-pluppar i headern
-  const caseStatuses = CASES.map((c) => {
-    const result = state.results.find((r) => r.caseId === c.id);
+  // Status per case i aktuell runda för paginerings-pluppar i headern
+  const caseStatuses = currentRound.caseIds.map((id) => {
+    const result = state.results.find((r) => r.caseId === id);
     if (!result) return undefined;
     return result.isCorrect ? ("correct" as const) : ("wrong" as const);
   });
@@ -1177,16 +1181,16 @@ export default function GamePage() {
     <div className="game-page">
       <Header
         showGameNavigation
-        currentCaseIndex={state.currentCaseIndex}
-        totalCases={CASES.length}
+        currentCaseIndex={posInRound}
+        totalCases={currentRound.caseIds.length}
         caseStatuses={caseStatuses}
         experience={(load("stats", DEFAULT_STATS) as PlayerStats).totalScore + state.score}
         streak={state.streak}
         onLogoClick={() => dispatch({ type: "EXIT_TO_START" })}
         onPrevious={() => dispatch({ type: "PREV_CASE" })}
         onNext={() => dispatch({ type: "NEXT_CASE" })}
-        isPrevDisabled={state.currentCaseIndex === 0}
-        isNextDisabled={state.currentCaseIndex >= CASES.length - 1}
+        isPrevDisabled={posInRound === 0}
+        isNextDisabled={posInRound >= currentRound.caseIds.length - 1}
       />
 
       <div className="game-page__body">

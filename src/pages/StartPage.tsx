@@ -28,7 +28,7 @@ export default function StartPage({ onStart }: StartPageProps) {
           className="start-page__wall-light start-page__wall-light--right"
         />
 
-        <div ref={dashboardRef}>
+        <div className="start-page__dashboard" ref={dashboardRef}>
           <PlayerDashboard />
         </div>
 

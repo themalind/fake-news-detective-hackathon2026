@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useRef } from 'react'
 import type { ReactNode, Dispatch } from 'react'
 import { CASES } from '../data/cases'
+import { ROUNDS } from '../data/rounds'
 import { load, save } from '../utils/storage'
 import type {
   GameState,
@@ -41,6 +42,7 @@ function calcRoundScore(
 
 const initialState: GameState = {
   screen: 'start',
+  currentRoundIndex: 0,
   currentCaseIndex: 0,
   score: 0,
   streak: 0,
@@ -52,24 +54,88 @@ const initialState: GameState = {
   roundStartTime: 0,
 }
 
+function firstCaseIndexOfRound(roundIndex: number): number {
+  return CASES.findIndex(c => c.id === ROUNDS[roundIndex].caseIds[0])
+}
+
+function nextUnresolvedInRound(
+  roundIndex: number,
+  currentCaseIndex: number,
+  results: RoundResult[]
+): number | null {
+  const round = ROUNDS[roundIndex]
+  const currentId = CASES[currentCaseIndex].id
+  const pos = round.caseIds.indexOf(currentId)
+  // Sök från nästa position framåt, sedan wrap runt
+  const ordered = [
+    ...round.caseIds.slice(pos + 1),
+    ...round.caseIds.slice(0, pos + 1),
+  ]
+  for (const id of ordered) {
+    if (!results.find(r => r.caseId === id)) {
+      return CASES.findIndex(c => c.id === id)
+    }
+  }
+  return null
+}
+
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'START_GAME': {
-      // Om alla 10 redan är avklarade — börja om från noll.
-      // Annars hoppa till nästa olösta case (resume efter avhopp till start).
-      const allDone = CASES.every((c) =>
-        state.results.find((r) => r.caseId === c.id)
-      )
-      if (allDone) {
-        return { ...initialState, screen: 'game', roundStartTime: Date.now() }
+      const allCaseIds = ROUNDS.flatMap(r => r.caseIds)
+      const allDone = allCaseIds.every(id => state.results.find(r => r.caseId === id))
+
+      // Om pågående session har delresultat (ej hela spelet klart) → resumea
+      if (state.results.length > 0 && !allDone) {
+        const nextRoundIndex = ROUNDS.findIndex(round =>
+          !round.caseIds.every(id => state.results.find(r => r.caseId === id))
+        )
+        const idx = nextRoundIndex === -1 ? 0 : nextRoundIndex
+        return {
+          ...state,
+          screen: 'round-intro',
+          currentRoundIndex: idx,
+          currentCaseIndex: firstCaseIndexOfRound(idx),
+          phase: 'classifying',
+          selectedClassification: null,
+          selectedClueIds: [],
+          roundStartTime: Date.now(),
+        }
       }
-      const nextIndex = CASES.findIndex(
-        (c) => !state.results.find((r) => r.caseId === c.id)
-      )
+
+      // Ny omgång — bestäm startrunda utifrån sparad level
+      const stored = load('stats', DEFAULT_STATS) as PlayerStats
+      const startRoundIndex = (stored.totalCompletedRounds ?? 0) % ROUNDS.length
+      return {
+        ...initialState,
+        screen: 'round-intro',
+        currentRoundIndex: startRoundIndex,
+        currentCaseIndex: firstCaseIndexOfRound(startRoundIndex),
+        roundStartTime: Date.now(),
+      }
+    }
+
+    case 'START_ROUND':
       return {
         ...state,
         screen: 'game',
-        currentCaseIndex: nextIndex === -1 ? 0 : nextIndex,
+        currentCaseIndex: firstCaseIndexOfRound(state.currentRoundIndex),
+        phase: 'classifying',
+        selectedClassification: null,
+        selectedClueIds: [],
+        roundStartTime: Date.now(),
+      }
+
+    case 'NEXT_ROUND': {
+      const nextRoundIndex = state.currentRoundIndex + 1
+      if (nextRoundIndex >= ROUNDS.length) {
+        return { ...state, screen: 'start', phase: 'complete' }
+      }
+      return {
+        ...state,
+        screen: 'round-intro',
+        currentRoundIndex: nextRoundIndex,
+        currentCaseIndex: firstCaseIndexOfRound(nextRoundIndex),
         phase: 'classifying',
         selectedClassification: null,
         selectedClueIds: [],
@@ -78,8 +144,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'EXIT_TO_START':
-      // Lämna spelet till startskärmen utan att rensa progress —
-      // användaren kan komma tillbaka och fortsätta från nästa olösta case.
       return { ...state, screen: 'start' }
 
     case 'SELECT_CLASSIFICATION':
@@ -145,30 +209,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'NEXT_CASE': {
-      // Om alla 10 är besvarade — gå direkt till summary, oavsett vilken
-      // case-position vi råkar vara på. Hanterar fallet då sista olösta
-      // case besvaras mitt i ordningen.
-      const allDone = CASES.every((c) =>
-        state.results.find((r) => r.caseId === c.id)
+      const currentRound = ROUNDS[state.currentRoundIndex]
+      const roundDone = currentRound.caseIds.every(id =>
+        state.results.find(r => r.caseId === id)
       )
-      if (allDone) {
-        return { ...state, screen: 'summary', phase: 'complete' }
+      if (roundDone) {
+        return { ...state, screen: 'round-summary', phase: 'complete' }
       }
-      // Hoppa till nästa case som ännu inte är besvarat (skippa de som
-      // redan har en result-entry).
-      let nextIndex = state.currentCaseIndex + 1
-      while (
-        nextIndex < CASES.length &&
-        state.results.find((r) => r.caseId === CASES[nextIndex].id)
-      ) {
-        nextIndex++
-      }
-      // Om vi gått past slutet utan att hitta en olöst — wrappa runt och
-      // ta första olösta från början.
-      if (nextIndex >= CASES.length) {
-        nextIndex = CASES.findIndex(
-          (c) => !state.results.find((r) => r.caseId === c.id)
-        )
+      const nextIndex = nextUnresolvedInRound(
+        state.currentRoundIndex,
+        state.currentCaseIndex,
+        state.results
+      )
+      if (nextIndex === null) {
+        return { ...state, screen: 'round-summary', phase: 'complete' }
       }
       return {
         ...state,
@@ -181,16 +235,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'PREV_CASE': {
-      const prevIndex = state.currentCaseIndex - 1
-      if (prevIndex < 0) return state
-      const prevCase = CASES[prevIndex]
-      const prevResult = state.results.find(r => r.caseId === prevCase.id)
+      const currentRound = ROUNDS[state.currentRoundIndex]
+      const currentId = CASES[state.currentCaseIndex].id
+      const posInRound = currentRound.caseIds.indexOf(currentId)
+      if (posInRound <= 0) return state
+      const prevId = currentRound.caseIds[posInRound - 1]
+      const prevIndex = CASES.findIndex(c => c.id === prevId)
+      const prevResult = state.results.find(r => r.caseId === prevId)
       return {
         ...state,
         currentCaseIndex: prevIndex,
-        // Vid backnav till besvarat case: visa artikeln + bevis-sektion
-        // (read-only) med användarens tidigare val. För obesvarat case:
-        // klassificeringsläge.
         phase: prevResult ? 'investigating' : 'classifying',
         selectedClassification: prevResult?.selectedClassification ?? null,
         selectedClueIds: prevResult?.selectedClueIds ?? [],
@@ -220,58 +274,63 @@ const DEFAULT_STATS: PlayerStats = {
   lastStreak: 0,
   totalScore: 0,
   badges: [],
+  totalCompletedRounds: 0,
 }
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState)
-  const savedRef = useRef(false)
+  const lastSavedRoundRef = useRef(-1)
 
   useEffect(() => {
-    if (state.screen === 'summary' && !savedRef.current) {
-      // Bara räkna omgången som slutförd om alla 10 case faktiskt är besvarade.
-      // Förhindrar att hopp förbi case via header-navigeringen ger spelet en falsk
-      // "klart"-stämpel i player-stats.
-      const allDone = CASES.every((c) =>
-        state.results.find((r) => r.caseId === c.id)
-      )
-      if (!allDone) return
-
-      savedRef.current = true
-      const existing = load('stats', DEFAULT_STATS) as PlayerStats
-      const gameCorrect = state.results.filter(r => r.isCorrect).length
-      const gameFooled = state.results.filter(r => !r.isCorrect).length
-      const gameEvidence = state.results.reduce((sum, r) => sum + r.correctCluesSelected, 0)
-
-      const newTotalGames = existing.totalGames + 1
-      const newTotalCorrect = existing.totalCorrect + gameCorrect
-      const newTotalEvidenceFound = existing.totalEvidenceFound + gameEvidence
-      const newBestStreak = Math.max(existing.bestStreak, state.maxStreak)
-      const newTotalScore = existing.totalScore + state.score
-
-      const badges = [...existing.badges]
-      const earn = (id: string) => { if (!badges.includes(id)) badges.push(id) }
-      earn('forsta-fallet')
-      if (newBestStreak >= 3) earn('streakjagaren')
-      if (newTotalEvidenceFound >= 15) earn('bevissamlaren')
-      if (newTotalGames >= 5) earn('veteranen')
-      if (newTotalGames >= 5 && newTotalCorrect / (newTotalGames * CASES.length) >= 0.8) earn('skarpskytten')
-
-      const updated: PlayerStats = {
-        totalGames: newTotalGames,
-        totalCorrect: newTotalCorrect,
-        totalFooled: existing.totalFooled + gameFooled,
-        totalEvidenceFound: newTotalEvidenceFound,
-        bestStreak: newBestStreak,
-        lastStreak: state.maxStreak,
-        totalScore: newTotalScore,
-        badges,
-      }
-      save('stats', updated)
-    }
     if (state.screen === 'start') {
-      savedRef.current = false
+      lastSavedRoundRef.current = -1
     }
   }, [state.screen])
+
+  useEffect(() => {
+    if (state.screen !== 'round-summary') return
+    if (lastSavedRoundRef.current === state.currentRoundIndex) return
+    lastSavedRoundRef.current = state.currentRoundIndex
+
+    const isLastRound = state.currentRoundIndex === ROUNDS.length - 1
+    const roundCaseIds = ROUNDS[state.currentRoundIndex].caseIds
+    const roundResults = state.results.filter(r => roundCaseIds.includes(r.caseId))
+    const roundCorrect = roundResults.filter(r => r.isCorrect).length
+    const roundFooled = roundResults.filter(r => !r.isCorrect).length
+    const roundEvidence = roundResults.reduce((sum, r) => sum + r.correctCluesSelected, 0)
+    const roundScore = roundResults.reduce((sum, r) => sum + r.scoreGained, 0)
+
+    const existing = load('stats', DEFAULT_STATS) as PlayerStats
+    const newTotalCorrect = existing.totalCorrect + roundCorrect
+    const newTotalEvidenceFound = existing.totalEvidenceFound + roundEvidence
+    const newBestStreak = Math.max(existing.bestStreak, state.maxStreak)
+    const newTotalCompletedRounds = (existing.totalCompletedRounds ?? 0) + 1
+    const newTotalGames = isLastRound ? existing.totalGames + 1 : existing.totalGames
+
+    const badges = [...existing.badges]
+    const earn = (id: string) => { if (!badges.includes(id)) badges.push(id) }
+    earn('forsta-fallet')
+    if (newBestStreak >= 3) earn('streakjagaren')
+    if (newTotalEvidenceFound >= 15) earn('bevissamlaren')
+    if (isLastRound) {
+      if (newTotalGames >= 5) earn('veteranen')
+      const totalPlayed = existing.totalCorrect + existing.totalFooled
+      if (newTotalGames >= 5 && totalPlayed > 0 && existing.totalCorrect / totalPlayed >= 0.8) earn('skarpskytten')
+    }
+
+    save('stats', {
+      ...existing,
+      totalGames: newTotalGames,
+      totalCorrect: newTotalCorrect,
+      totalFooled: existing.totalFooled + roundFooled,
+      totalEvidenceFound: newTotalEvidenceFound,
+      bestStreak: newBestStreak,
+      lastStreak: state.maxStreak,
+      totalScore: existing.totalScore + roundScore,
+      totalCompletedRounds: newTotalCompletedRounds,
+      badges,
+    })
+  }, [state.screen, state.currentRoundIndex])
 
   return (
     <GameContext.Provider value={{ state, dispatch }}>
