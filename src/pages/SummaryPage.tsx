@@ -28,18 +28,6 @@ function getRank(score: number): string {
   return "Junior Skeptiker";
 }
 
-function getRankBadge(score: number): string {
-  if (score >= 30000) return "👑";
-  if (score >= 20000) return "✦✦✦";
-  if (score >= 12000) return "✦✦★";
-  if (score >= 7500) return "✦★★";
-  if (score >= 4500) return "★★★";
-  if (score >= 2500) return "★★☆";
-  if (score >= 1200) return "★☆☆";
-  if (score >= 500) return "◈◈◇";
-  return "◈◇◇";
-}
-
 export default function SummaryPage() {
   const { state, dispatch } = useGame();
   const { score, maxStreak, results } = state;
@@ -50,7 +38,6 @@ export default function SummaryPage() {
   const correctCount = correctResults.length;
   const accuracy = results.length > 0 ? Math.round((correctCount / results.length) * 100) : 0;
   const rank = getRank(score);
-  const badge = getRankBadge(score);
 
   return (
     <>

@@ -684,30 +684,44 @@ function FeedbackOverlay({
     selectedClueIds,
   );
 
+  const scoreParts = [
+    `${classScore >= 0 ? "+" : ""}${classScore} klassificering`,
+    `${clueScore >= 0 ? "+" : ""}${clueScore} bevis`,
+    timeBonus > 0 ? `+${timeBonus} snabbhet` : null,
+  ].filter(Boolean);
+
   return (
     <div className="feedback-overlay" role="dialog" aria-modal="true">
       <div className="feedback-overlay__card">
         <div
-          className={`feedback-overlay__verdict ${result.isCorrect ? "feedback-overlay__verdict--correct" : "feedback-overlay__verdict--wrong"}`}
+          className={`feedback-overlay__verdict feedback-overlay__verdict--${
+            result.isCorrect ? "correct" : "wrong"
+          }`}
         >
           <span className="feedback-overlay__verdict-icon">
             {result.isCorrect ? "✓" : "✗"}
           </span>
-          <div>
-            <strong>
-              {result.isCorrect ? "Rätt bedömning!" : "Fel klassificering"}
-            </strong>
-            {!result.isCorrect && (
-              <span className="feedback-overlay__correct-label">
-                {" "}
-                Rätt klassificering är <strong>{correctLabel}</strong>. Du svarade{" "}
-                {selectedLabel}.
-              </span>
-            )}
-          </div>
+          <strong className="feedback-overlay__verdict-title">
+            {result.isCorrect ? "Rätt bedömning!" : "Fel klassificering"}
+          </strong>
+          {!result.isCorrect && (
+            <span className="feedback-overlay__verdict-sub">
+              Rätt: <strong>{correctLabel}</strong> · Du svarade {selectedLabel}
+            </span>
+          )}
         </div>
 
-        <p className="feedback-overlay__explanation">{currentCase.feedback}</p>
+        <div className="feedback-overlay__explanation">
+          <p className="feedback-overlay__explanation-text">
+            {currentCase.feedback}
+          </p>
+          <div className="feedback-overlay__consequence">
+            <span className="feedback-overlay__consequence-label">
+              Om den delas:
+            </span>
+            <span>{currentCase.consequence}</span>
+          </div>
+        </div>
 
         {clueGroups.length > 0 && (
           <div className="clue-review">
@@ -719,11 +733,10 @@ function FeedbackOverlay({
                   className={`clue-group clue-group--${status}`}
                 >
                   <h4 className="clue-group__title">
-                    <span className="clue-group__icon" aria-hidden="true">
-                      {STATUS_ICON[status]}
+                    <span className="clue-group__pill">
+                      {STATUS_ICON[status]} {STATUS_LABEL[status]} ·{" "}
+                      {items.length}
                     </span>
-                    <span>{STATUS_LABEL[status]}</span>
-                    <span className="clue-group__count">{items.length}</span>
                   </h4>
                   <ul className="clue-group__list">
                     {items.map(({ clue, points }) => (
@@ -743,44 +756,14 @@ function FeedbackOverlay({
           </div>
         )}
 
-        <div className="feedback-overlay__score-breakdown">
-          <div className="feedback-overlay__score-row">
-            <span>
-              {result.isCorrect ? "Rätt klassificering" : "Fel klassificering"}
-            </span>
-            <span className={classScore >= 0 ? "positive" : "negative"}>
-              {classScore >= 0 ? "+" : ""}
-              {classScore} XP
-            </span>
-          </div>
-          <div className="feedback-overlay__score-row">
-            <span>
-              Ledtrådar ({result.correctCluesSelected} rätt,{" "}
-              {result.incorrectCluesSelected} fel)
-            </span>
-            <span className={clueScore >= 0 ? "positive" : "negative"}>
-              {clueScore >= 0 ? "+" : ""}
-              {clueScore} XP
-            </span>
-          </div>
-          {timeBonus > 0 && (
-            <div className="feedback-overlay__score-row">
-              <span>Snabbhetsbonus</span>
-              <span className="positive">+{timeBonus} XP</span>
-            </div>
-          )}
-          <div className="feedback-overlay__score-row feedback-overlay__score-total">
-            <span>Rundans totalt</span>
-            <span>
-              {result.scoreGained >= 0 ? "+" : ""}
-              {result.scoreGained} XP
-            </span>
-          </div>
-        </div>
-
-        <div className="feedback-overlay__consequence">
-          <span className="feedback-overlay__consequence-icon">&#9888;</span>
-          {currentCase.consequence}
+        <div className="feedback-overlay__score">
+          <span className="feedback-overlay__score-parts">
+            {scoreParts.join(" · ")}
+          </span>
+          <span className="feedback-overlay__score-total">
+            {result.scoreGained >= 0 ? "+" : ""}
+            {result.scoreGained} XP
+          </span>
         </div>
 
         <button className="feedback-overlay__next-btn" onClick={onNext}>
