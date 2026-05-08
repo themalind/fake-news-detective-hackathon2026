@@ -3,16 +3,19 @@ import { useGame } from "../context/GameContext";
 import { CASES } from "../data/cases";
 import { DETECTIVE_HINTS, URL_INSPECT_TIPS } from "../data/hints";
 import type {
+  ArticleLink,
   Case,
   Classification,
   Clue,
   ImageAnalysis,
   PlayerStats,
+  ResearchReport,
   RoundResult,
+  ShadyLinkInfo,
 } from "../types/game";
 import Header from "../components/Header";
 import { load } from "../utils/storage";
-import { ArrowRight, Lock, Search, Star } from "lucide-react";
+import { AlertTriangle, ArrowRight, Lock, Search, Star, X } from "lucide-react";
 import "./GamePage.scss";
 
 const DEFAULT_STATS: PlayerStats = {
@@ -100,13 +103,17 @@ function CaseCard({
   currentCase,
   article,
   onImageSearch,
+  onLinkClick,
   selectedClassification,
 }: {
   currentCase: Case;
   article?: ArticleContent;
   onImageSearch?: () => void;
+  onLinkClick: (link: ArticleLink) => void;
   selectedClassification?: string | null;
 }) {
+  // articles.html är källan för all metadata och brödtext.
+  // cases.ts driver bara gameplay (klassificering, bevis, etc.) + url.
   const source = article?.source || currentCase.source;
   const headline = article?.headline || currentCase.headline;
   const author =
@@ -179,7 +186,11 @@ function CaseCard({
           )}
           {paragraphs.map((paragraph, index) => (
             <p className="case-card__content" key={index}>
-              {paragraph}
+              {renderParagraphWithLinks(
+                paragraph,
+                currentCase.inlineLinks,
+                onLinkClick,
+              )}
             </p>
           ))}
         </div>
@@ -557,7 +568,7 @@ function LockInfoPopover({
         className="lock-popover__cta"
         onClick={onInspectUrl}
       >
-        Fler tips på url-granskning <ArrowRight size={14} strokeWidth={2.25} />
+        Fler tips på URL-granskning <ArrowRight size={14} strokeWidth={2.25} />
       </button>
     </div>
   );
@@ -654,6 +665,283 @@ function UrlInspectModal({ onClose }: { onClose: () => void }) {
         >
           STÄNG
         </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Inline-länkar i artiklar ----------
+
+const LINK_TOKEN_RE = /\{\{(\w+)\|([^}]+)\}\}/g;
+
+function renderParagraphWithLinks(
+  text: string,
+  links: Record<string, ArticleLink> | undefined,
+  onLinkClick: (link: ArticleLink) => void,
+): React.ReactNode {
+  if (!links) return text;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let nodeKey = 0;
+  // RegExp.exec med global flagga — reset:as inte mellan anrop, så ny RegExp varje gång
+  const re = new RegExp(LINK_TOKEN_RE.source, "g");
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    const link = links[match[1]];
+    const displayText = match[2];
+    if (link) {
+      parts.push(
+        <ArticleLinkInline
+          key={`link-${nodeKey++}`}
+          link={link}
+          displayText={displayText}
+          onClick={() => onLinkClick(link)}
+        />,
+      );
+    } else {
+      parts.push(displayText);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return parts;
+}
+
+function ArticleLinkInline({
+  link,
+  displayText,
+  onClick,
+}: {
+  link: ArticleLink;
+  displayText: string;
+  onClick: () => void;
+}) {
+  return (
+    <a
+      href={link.url}
+      title={link.url}
+      className="article-link"
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+    >
+      {displayText}
+    </a>
+  );
+}
+
+// Fake-browser-modal — visar antingen en forskningsrapport eller en 404-sida
+function FakeBrowserModal({
+  link,
+  onClose,
+}: {
+  link: Extract<ArticleLink, { type: "report" | "dead" }>;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fake-browser-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label={link.type === "report" ? "Forskningsrapport" : "404 sida"}
+      onClick={onClose}
+    >
+      <div
+        className="fake-browser"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="fake-browser__url-bar">
+          <Lock size={12} strokeWidth={2.25} className="fake-browser__lock" />
+          <span className="fake-browser__url" title={link.url}>
+            {link.url}
+          </span>
+          <button
+            type="button"
+            className="fake-browser__close"
+            onClick={onClose}
+            aria-label="Stäng"
+          >
+            <X size={16} strokeWidth={2.25} />
+          </button>
+        </div>
+        <div className="fake-browser__body">
+          {link.type === "report" ? (
+            <ReportContent report={link.report} />
+          ) : (
+            <DeadPageContent url={link.url} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportContent({ report }: { report: ResearchReport }) {
+  return (
+    <article className="report">
+      <header className="report__header">
+        <h1 className="report__title">{report.title}</h1>
+        <p className="report__authors">
+          {report.authors}
+          <span className="report__affiliation"> — {report.affiliation}</span>
+        </p>
+        <p className="report__meta">
+          Publicerad {report.date}
+          {report.participants !== undefined &&
+            ` · ${report.participants} deltagare`}
+        </p>
+        {report.funding && (
+          <p className="report__funding">
+            <strong>Finansiering:</strong> {report.funding}
+          </p>
+        )}
+      </header>
+
+      <section className="report__section">
+        <h2 className="report__heading">Sammanfattning</h2>
+        <p>{report.abstract}</p>
+      </section>
+
+      <section className="report__section">
+        <h2 className="report__heading">Metod</h2>
+        <p>{report.method}</p>
+      </section>
+
+      <section className="report__section">
+        <h2 className="report__heading">Resultat</h2>
+        <ul className="report__list">
+          {report.findings.map((f, i) => (
+            <li key={i}>{f}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="report__section">
+        <h2 className="report__heading">Slutsats</h2>
+        <p>{report.conclusion}</p>
+      </section>
+    </article>
+  );
+}
+
+function DeadPageContent({ url }: { url: string }) {
+  return (
+    <div className="dead-page">
+      <div className="dead-page__code">404</div>
+      <h1 className="dead-page__title">Sidan kunde inte hittas</h1>
+      <p className="dead-page__url">{url}</p>
+      <p className="dead-page__lead">
+        Servern svarade men hittade ingen resurs på den här adressen.
+      </p>
+      <p className="dead-page__hint">
+        💡 Detektivtips: Om en artikel hänvisar till en källa som inte ens
+        finns — då existerar troligen inte underlaget för påståendet heller.
+      </p>
+    </div>
+  );
+}
+
+// Suspicious-link-modal — varning + URL-tips
+function SuspiciousLinkModal({
+  link,
+  onClose,
+  onShowTips,
+}: {
+  link: Extract<ArticleLink, { type: "shady" }>;
+  onClose: () => void;
+  onShowTips: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const { warning } = link;
+
+  return (
+    <div
+      className="suspicious-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Varning för misstänkt länk"
+      onClick={onClose}
+    >
+      <div
+        className="suspicious-modal__card"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="suspicious-modal__header">
+          <AlertTriangle
+            size={28}
+            strokeWidth={2}
+            className="suspicious-modal__warn-icon"
+          />
+          <div>
+            <h2 className="suspicious-modal__title">Misstänkt länk</h2>
+            <p className="suspicious-modal__sub">
+              Håll alltid muspekaren över en länk <em>innan</em> du klickar.
+              Den fullständiga URL:en visas då i webbläsarens nedre kant — så
+              du hinner avgöra om den ser säker ut. På mobil: håll fingret
+              nedtryckt på länken.
+            </p>
+          </div>
+        </div>
+
+        <div className="suspicious-modal__url-row">
+          <span className="suspicious-modal__url-label">URL</span>
+          <span className="suspicious-modal__url">{link.url}</span>
+        </div>
+
+        <div className="suspicious-modal__legit">
+          <span className="suspicious-modal__legit-label">
+            Legitim adress hade varit
+          </span>
+          <span className="suspicious-modal__legit-domain">
+            {warning.legitDomain}
+          </span>
+        </div>
+
+        <ul className="suspicious-modal__reasons">
+          {warning.reasons.map((reason, i) => (
+            <li key={i} className="suspicious-modal__reason">
+              {reason}
+            </li>
+          ))}
+        </ul>
+
+        <div className="suspicious-modal__actions">
+          <button
+            type="button"
+            className="suspicious-modal__tips-btn"
+            onClick={onShowTips}
+          >
+            Fler tips på URL-granskning
+          </button>
+          <button
+            type="button"
+            className="suspicious-modal__close-btn"
+            onClick={onClose}
+          >
+            STÄNG
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -816,6 +1104,12 @@ export default function GamePage() {
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
   const [showUrlInspect, setShowUrlInspect] = useState(false);
   const [showFacit, setShowFacit] = useState(false);
+  const [activeBrowserLink, setActiveBrowserLink] = useState<
+    Extract<ArticleLink, { type: "report" | "dead" }> | null
+  >(null);
+  const [activeShadyLink, setActiveShadyLink] = useState<
+    Extract<ArticleLink, { type: "shady" }> | null
+  >(null);
 
   // Resultatet för det case användaren ser just nu (om det är besvarat).
   // Används för att visa "Visa facit"-läget vid backnav till tidigare cases.
@@ -847,6 +1141,8 @@ export default function GamePage() {
     setShowImageAnalysis(false);
     setShowUrlInspect(false);
     setShowFacit(false);
+    setActiveBrowserLink(null);
+    setActiveShadyLink(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [state.currentCaseIndex]);
 
@@ -883,7 +1179,7 @@ export default function GamePage() {
         <div className="game-page__layout">
           <div className="game-page__main">
             <BrowserFrame
-              source={currentCase.source}
+              source={currentCase.url ?? currentCase.source}
               onInspectUrl={() => setShowUrlInspect(true)}
             >
               <CaseCard
@@ -894,6 +1190,13 @@ export default function GamePage() {
                     ? () => setShowImageAnalysis(true)
                     : undefined
                 }
+                onLinkClick={(link) => {
+                  if (link.type === "shady") {
+                    setActiveShadyLink(link);
+                  } else {
+                    setActiveBrowserLink(link);
+                  }
+                }}
                 selectedClassification={state.selectedClassification}
               />
             </BrowserFrame>
@@ -1001,6 +1304,24 @@ export default function GamePage() {
         <ImageAnalysisModal
           analysis={currentCase.imageAnalysis}
           onClose={() => setShowImageAnalysis(false)}
+        />
+      )}
+
+      {activeBrowserLink && (
+        <FakeBrowserModal
+          link={activeBrowserLink}
+          onClose={() => setActiveBrowserLink(null)}
+        />
+      )}
+
+      {activeShadyLink && (
+        <SuspiciousLinkModal
+          link={activeShadyLink}
+          onClose={() => setActiveShadyLink(null)}
+          onShowTips={() => {
+            setActiveShadyLink(null);
+            setShowUrlInspect(true);
+          }}
         />
       )}
     </div>

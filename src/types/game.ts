@@ -22,11 +22,45 @@ export interface ImageAnalysis {
   subject?: string;
 }
 
+// ---------- Inline-länkar i artiklar ----------
+
+/** Forskningsrapport som visas i fake-browser för "report"-länkar */
+export interface ResearchReport {
+  title: string;
+  authors: string;
+  affiliation: string;
+  funding?: string;
+  date: string;
+  participants?: number;
+  abstract: string;
+  method: string;
+  findings: string[];
+  conclusion: string;
+}
+
+/** Detaljer för en "shady"-länk som öppnar varningsmodal */
+export interface ShadyLinkInfo {
+  /** Tydlig anledningar till varför URL:en är misstänkt */
+  reasons: string[];
+  /** Vad URL:en låtsas peka mot (t.ex. "regeringens pressmeddelande") */
+  pretendsToBe: string;
+  /** Vad legitim adress hade varit */
+  legitDomain: string;
+}
+
+export type ArticleLink =
+  | { type: "report"; url: string; report: ResearchReport }
+  | { type: "dead"; url: string }
+  | { type: "shady"; url: string; warning: ShadyLinkInfo };
+
 export interface Case {
   id: string;
   caseNumber: number;
   type: CaseType;
+  /** Tidningens/sajtens visningsnamn (i mastheaden) — fallback om articles.html saknar source */
   source: string;
+  /** Full URL som visas i browser-frame:s adressbar. Faller tillbaka på source om saknad. */
+  url?: string;
   author?: string;
   date: string;
   headline: string;
@@ -44,6 +78,8 @@ export interface Case {
   consequence: string;
   image?: string;
   imageAnalysis?: ImageAnalysis;
+  /** Inline-länkar som referas via {{key|displaytext}}-tokens i artikeltext */
+  inlineLinks?: Record<string, ArticleLink>;
 }
 
 // ---------- Game state ----------

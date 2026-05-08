@@ -5,7 +5,8 @@ export const CASES: Case[] = [
     id: 'case-1',
     caseNumber: 1,
     type: 'headline',
-    source: 'HealthBuzz.net',
+    source: 'HealthBuzz',
+    url: 'https://www.healthbuzz.net/halsa/choklad-cancer-genombrott',
     author: 'Redaktionen',
     date: 'I dag',
     headline: 'Forskare bekräftar: choklad botar cancer',
@@ -48,7 +49,8 @@ export const CASES: Case[] = [
     id: 'case-2',
     caseNumber: 2,
     type: 'image-post',
-    source: '@news_alerts_247 (anonymt konto, skapat för 2 veckor sedan)',
+    source: 'News Alerts 247',
+    url: 'https://x.com/news_alerts_247/status/1839283746591',
     date: 'Publicerad i dag',
     headline: 'Chockbilder: Göteborg under vatten - boende evakueras nu',
     content:
@@ -96,6 +98,7 @@ export const CASES: Case[] = [
     caseNumber: 3,
     type: 'article',
     source: 'EnergyBoost.com',
+    url: 'https://www.energyboost.com/halsa/ny-studie-koffein-minne-2026',
     author: 'Dr. Marcus Webb',
     date: 'För 3 dagar sedan',
     headline: 'Ny studie bevisar att energidryck förbättrar minnet hos unga',
@@ -134,12 +137,39 @@ export const CASES: Case[] = [
     imageAnalysis: {
       matchFound: false
     },
+    inlineLinks: {
+      study: {
+        type: 'report',
+        url: 'https://psychstudies.uu.se/papers/2024/sunden-holm-koffein-minne.pdf',
+        report: {
+          title: 'Effekter av koffeinintag på korttidsminne hos unga vuxna — en pilotstudie',
+          authors: 'Maria Sundén, Anders Holm',
+          affiliation: 'Institutionen för psykologi, Karlstads universitet',
+          funding: 'Studien finansierades av Volt Energy AB.',
+          date: 'Mars 2024',
+          participants: 12,
+          abstract:
+            'Vi undersökte om dagligt intag av koffeinhaltig energidryck påverkar korttidsminnet hos unga vuxna under en tvåveckorsperiod. Resultaten indikerar en svag tendens till förbättring i koffein-gruppen, men skillnaden mot placebo var inte statistiskt signifikant.',
+          method:
+            'Pilotstudie med 12 frivilliga deltagare (ålder 19–24, 7 kvinnor och 5 män). Ej slumpmässigt urval — deltagarna rekryterades via sociala medier. Koffein-gruppen (n=6) drack 250 ml energidryck dagligen i 14 dagar; placebo-gruppen (n=6) drack en likvärdig dryck utan koffein. Korttidsminne mättes med digit-span-test före och efter perioden.',
+          findings: [
+            'Koffein-gruppen: genomsnittlig förbättring 4,2 % (SD 6,8).',
+            'Placebo-gruppen: genomsnittlig förbättring 1,8 % (SD 5,1).',
+            'Skillnaden mellan grupperna var inte statistiskt signifikant (p = 0,18).',
+            'Inga skillnader observerades mellan kön eller ålder inom gruppen.',
+          ],
+          conclusion:
+            'Studiens resultat bör tolkas med försiktighet. Pilotstudien antyder en möjlig positiv effekt av koffein på korttidsminne hos unga vuxna, men effekten är liten och osäker. Vi rekommenderar replikering med större och mer diverst urval, längre studietid och oberoende finansiering innan slutsatser kan dras.',
+        },
+      },
+    },
   },
   {
     id: 'case-4',
     caseNumber: 4,
     type: 'headline',
-    source: 'LocalNews24.se',
+    source: 'LocalNews24',
+    url: 'https://www.localnews24.se/skola/mobilforbud-stockholmsskola',
     author: 'Redaktionen',
     date: 'I går',
     headline: 'Skola förbjuder alla mobiler för alltid från och med i morgon',
@@ -182,7 +212,7 @@ export const CASES: Case[] = [
     id: 'case-5',
     caseNumber: 5,
     type: 'image-post',
-    source: '@real_news_now (anonymt konto, 200 följare)',
+    source: 'real news now (anonymt konto, 200 följare)',
     date: 'För 2 timmar sedan',
     headline: 'BREAKING: Känd artist gripen på flygplats - bildbevis',
     content:
@@ -224,7 +254,8 @@ export const CASES: Case[] = [
     id: 'case-6',
     caseNumber: 6,
     type: 'article',
-    source: 'svt-nyheter.se.co',
+    source: 'svt-nyheter.se',
+    url: 'https://svt-nyheter.se.co/sv/nyheter/12839?utm=campaign-N3WS',
     author: 'Nyhetsdesk',
     date: 'I dag',
     headline: 'Regeringen inför nattligt internetstopp för alla ungdomar',
@@ -262,12 +293,29 @@ export const CASES: Case[] = [
     imageAnalysis: {
       matchFound: false
     },
+    inlineLinks: {
+      pressrelease: {
+        type: 'shady',
+        url: 'https://regeringen-pressrum.x-info.cc/sv/12839?campaign=N3WS-EXKLUSIV',
+        warning: {
+          pretendsToBe: 'regeringens pressmeddelande',
+          legitDomain: 'regeringen.se',
+          reasons: [
+            '"regeringen-pressrum" är inte regeringens domän — riktiga pressmeddelanden ligger på regeringen.se.',
+            'Toppdomänen .cc (Cocosöarna, ofta använt för kommersiella återförsäljar-domäner) — inte .se.',
+            'Extra subdomän "pressrum" och path med slumpmässig ID-sträng är typiskt för kampanjlandnings­sidor.',
+            'URL:en innehåller "campaign=N3WS-EXKLUSIV" — en marknadsförings­parameter, inte officiell publicering.',
+          ],
+        },
+      },
+    },
   },
   {
     id: 'case-7',
     caseNumber: 7,
     type: 'headline',
-    source: 'EkonomiDirekt24.se',
+    source: 'EkonomiDirekt.se',
+    url: 'https://www.ekonomidirekt.se/ekonomi/matpriser-rusar-200-procent',
     author: 'Lena Holm',
     date: 'I går',
     headline: 'Matpriserna rusar 200 procent - barnfamiljer varnas',
@@ -311,6 +359,7 @@ export const CASES: Case[] = [
     caseNumber: 8,
     type: 'article',
     source: 'Klimatbladet.se',
+    url: 'https://www.klimatbladet.se/lokalt/svala-busshallplatser-test-2026',
     author: 'Sara Lind',
     date: 'I dag',
     headline: 'Kommun testar svala busshållplatser inför sommaren',
@@ -355,6 +404,7 @@ export const CASES: Case[] = [
     caseNumber: 9,
     type: 'article',
     source: 'TryggVardag.org',
+    url: 'https://www.tryggvardag.org/sponsrat/brandvarnare-helt-saker',
     author: 'Annonsbilaga',
     date: 'För 1 dag sedan',
     headline: 'Professor: Den här brandvarnaren gör ditt hem helt säkert',
@@ -368,6 +418,7 @@ export const CASES: Case[] = [
       { id: 'c9-4', text: 'Texten är märkt som annonsbilaga men låter som en nyhetsartikel', isRelevant: true },
       { id: 'c9-5', text: 'Artikeln handlar om säkerhet i hemmet', isRelevant: false },
       { id: 'c9-6', text: 'Brandvarnare är en verklig produktkategori', isRelevant: false },
+      { id: 'c9-7', text: 'Länken till den "oberoende laboratorietesten" leder till en 404 — rapporten existerar inte', isRelevant: true },
     ],
     positiveClues: [
       { id: 'p9-1', text: 'En expert med professorstitel citeras', isRelevant: false },
@@ -391,12 +442,19 @@ export const CASES: Case[] = [
     imageAnalysis: {
       matchFound: false
     },
+    inlineLinks: {
+      labtest: {
+        type: 'dead',
+        url: 'https://sakerhemmiljo-institutet.se/tester/tryggbrand-pro-2024.pdf',
+      },
+    },
   },
   {
     id: 'case-10',
     caseNumber: 10,
     type: 'article',
     source: 'Lokalposten.se',
+    url: 'https://www.lokalposten.se/kommunalt/biblioteket-langre-oppet',
     author: 'Mikael Åberg',
     date: 'I dag',
     headline: 'Biblioteket förlänger öppettiderna två kvällar i veckan',

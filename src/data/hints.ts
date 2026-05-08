@@ -65,7 +65,7 @@ export const SOURCE_CRITIC_HINTS: Hint[] = [
   },
   {
     title: 'Klickbete-rubrik?',
-    body: 'Extrema rubriker som "Det här CHOCKAR experterna" är klassiska klickbeten (eng: "Clickbait") — rubriker designade för att kittla nyfikenheten utan att leverera substans. Hela poängen är att du klickar och i många fall utsatt för marknadsföring; sanningshalten är sekundär.',
+    body: 'Extrema rubriker som "Det här CHOCKAR experterna" är klickbete (eng: clickbait) — rubriker designade för klick, inte sanning. Ofta marknadsföring i förklädnad.',
   },
   {
     title: 'Produkt i fokus = vinklat',
@@ -73,7 +73,7 @@ export const SOURCE_CRITIC_HINTS: Hint[] = [
   },
   {
     title: 'Algoritmen jagar dina känslor',
-    body: 'Plattformar samlar data om vad som får dig att stanna kvar. Innehåll som triggar ilska, rädsla eller chock prioriteras eftersom det engagerar — inte för att det stämmer. Förutsätt att info från okända källor är vinklad tills du kan bekräfta den någon annanstans.',
+    body: 'Plattformar samlar data om vad som får dig att stanna kvar. Innehåll som triggar ilska, rädsla eller chock prioriteras eftersom det engagerar — inte för att det stämmer. Förutsätt att info från okända källor är vinklad tills du kan bekräfta motsatsen.',
   },
 ];
 
