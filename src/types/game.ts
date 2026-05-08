@@ -54,6 +54,8 @@ export interface RoundResult {
   isCorrect: boolean;
   correctCluesSelected: number;
   incorrectCluesSelected: number;
+  /** Sparas så bevis-granskningen kan visas igen i review-läge */
+  selectedClueIds: string[];
   scoreGained: number;
   timeElapsed: number;
 }

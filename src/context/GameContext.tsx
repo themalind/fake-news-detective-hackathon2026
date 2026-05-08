@@ -129,6 +129,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         incorrectCluesSelected: state.selectedClueIds.filter(
           (id) => !allClues.find((c) => c.id === id)?.isRelevant
         ).length,
+        selectedClueIds: state.selectedClueIds,
         scoreGained: roundScore,
         timeElapsed,
       }
@@ -187,9 +188,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         currentCaseIndex: prevIndex,
-        phase: prevResult ? 'feedback' : 'classifying',
+        // Vid backnav till besvarat case: visa artikeln + bevis-sektion
+        // (read-only) med användarens tidigare val. För obesvarat case:
+        // klassificeringsläge.
+        phase: prevResult ? 'investigating' : 'classifying',
         selectedClassification: prevResult?.selectedClassification ?? null,
-        selectedClueIds: [],
+        selectedClueIds: prevResult?.selectedClueIds ?? [],
       }
     }
 

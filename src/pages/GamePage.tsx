@@ -228,6 +228,7 @@ interface EvidencePanelProps {
   selectedClueIds: string[];
   onToggle: (id: string) => void;
   onSubmit: () => void;
+  isReadOnly?: boolean;
 }
 
 function EvidencePanel({
@@ -238,6 +239,7 @@ function EvidencePanel({
   selectedClueIds,
   onToggle,
   onSubmit,
+  isReadOnly = false,
 }: EvidencePanelProps) {
   const visibleClues =
     classification === "true"
@@ -256,8 +258,10 @@ function EvidencePanel({
     return (
       <button
         key={clue.id}
+        type="button"
         className={`clue-chip${selected ? " clue-chip--selected" : ""}`}
-        onClick={() => onToggle(clue.id)}
+        onClick={isReadOnly ? undefined : () => onToggle(clue.id)}
+        disabled={isReadOnly}
         aria-pressed={selected}
       >
         <span className="clue-chip__check">{selected ? "✓" : "+"}</span>
@@ -269,7 +273,11 @@ function EvidencePanel({
   return (
     <div className="evidence-panel">
       <div className="evidence-panel__header">
-        <span className="evidence-panel__sub">Välj alla bevis som stämmer</span>
+        <span className="evidence-panel__sub">
+          {isReadOnly
+            ? "Du har redan klassificerat detta fall"
+            : "Välj alla bevis som stämmer"}
+        </span>
       </div>
       <div className="evidence-panel__grid">{shuffled.map(renderChip)}</div>
 
@@ -282,9 +290,15 @@ function EvidencePanel({
         <button
           className="evidence-panel__submit"
           onClick={onSubmit}
-          disabled={selectedClueIds.length === 0}
+          disabled={!isReadOnly && selectedClueIds.length === 0}
         >
-          LÄMNA IN FALL <ArrowRight size={16} strokeWidth={2.5} />
+          {isReadOnly ? (
+            "VISA FACIT"
+          ) : (
+            <>
+              LÄMNA IN FALL <ArrowRight size={16} strokeWidth={2.5} />
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -650,6 +664,7 @@ interface FeedbackOverlayProps {
   currentCase: Case;
   selectedClueIds: string[];
   isLastCase: boolean;
+  isReview?: boolean;
   onNext: () => void;
 }
 
@@ -658,6 +673,7 @@ function FeedbackOverlay({
   currentCase,
   selectedClueIds,
   isLastCase,
+  isReview = false,
   onNext,
 }: FeedbackOverlayProps) {
   const classLabel: Record<Classification, string> = {
@@ -675,14 +691,17 @@ function FeedbackOverlay({
     result.timeElapsed < 20_000 ? 50 : result.timeElapsed < 40_000 ? 25 : 0;
   const classScore = result.isCorrect ? 100 : -50;
 
-  const clueGroups = buildClueGroups(
-    [
-      ...currentCase.clues,
-      ...currentCase.positiveClues,
-      ...currentCase.misleadingClues,
-    ],
-    selectedClueIds,
-  );
+  // Bevis-granskningen ska bara titta på den lista användaren faktiskt såg
+  // (motsvarande deras valda klassificering). Annars listas "missade" ledtrådar
+  // från klassificeringar de aldrig hade möjlighet att välja chips från.
+  const cluesForReview =
+    result.selectedClassification === "true"
+      ? currentCase.positiveClues
+      : result.selectedClassification === "false"
+        ? currentCase.clues
+        : currentCase.misleadingClues;
+
+  const clueGroups = buildClueGroups(cluesForReview, selectedClueIds);
 
   const scoreParts = [
     `${classScore >= 0 ? "+" : ""}${classScore} klassificering`,
@@ -767,8 +786,14 @@ function FeedbackOverlay({
         </div>
 
         <button className="feedback-overlay__next-btn" onClick={onNext}>
-          {isLastCase ? "SE RESULTAT" : "NÄSTA FALL"}{" "}
-          <ArrowRight size={16} strokeWidth={2.5} />
+          {isReview ? (
+            "STÄNG"
+          ) : (
+            <>
+              {isLastCase ? "SE RESULTAT" : "NÄSTA FALL"}{" "}
+              <ArrowRight size={16} strokeWidth={2.5} />
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -790,6 +815,14 @@ export default function GamePage() {
   );
   const [showImageAnalysis, setShowImageAnalysis] = useState(false);
   const [showUrlInspect, setShowUrlInspect] = useState(false);
+  const [showFacit, setShowFacit] = useState(false);
+
+  // Resultatet för det case användaren ser just nu (om det är besvarat).
+  // Används för att visa "Visa facit"-läget vid backnav till tidigare cases.
+  const currentCaseResult = state.results.find(
+    (r) => r.caseId === currentCase.id,
+  );
+  const isAnswered = !!currentCaseResult;
 
   // Detektivtips: stegas fram automatiskt varje gång användaren byter case,
   // men man kan också manuellt bläddra med chevron-pilarna och fortsätta
@@ -813,6 +846,7 @@ export default function GamePage() {
   useEffect(() => {
     setShowImageAnalysis(false);
     setShowUrlInspect(false);
+    setShowFacit(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [state.currentCaseIndex]);
 
@@ -874,20 +908,27 @@ export default function GamePage() {
                 onToggle={(id) =>
                   dispatch({ type: "TOGGLE_CLUE", clueId: id })
                 }
-                onSubmit={() => dispatch({ type: "SUBMIT_CASE" })}
+                onSubmit={
+                  isAnswered
+                    ? () => setShowFacit(true)
+                    : () => dispatch({ type: "SUBMIT_CASE" })
+                }
+                isReadOnly={isAnswered}
               />
             )}
           </div>
 
           <aside className="game-page__sidebar">
             <section className="classify-panel">
-              <p className="classify-panel__label">KLASSIFICERA ARTIKELN</p>
+              <p className="classify-panel__label">
+                {isAnswered ? "DIN KLASSIFICERING" : "KLASSIFICERA ARTIKELN"}
+              </p>
               <div className="classify-panel__buttons">
                 <ClassifyButton
                   label="SANT"
                   value="true"
                   selected={state.selectedClassification === "true"}
-                  disabled={state.phase === "feedback"}
+                  disabled={state.phase === "feedback" || isAnswered}
                   onClick={() =>
                     dispatch({
                       type: "SELECT_CLASSIFICATION",
@@ -899,7 +940,7 @@ export default function GamePage() {
                   label="FALSKT"
                   value="false"
                   selected={state.selectedClassification === "false"}
-                  disabled={state.phase === "feedback"}
+                  disabled={state.phase === "feedback" || isAnswered}
                   onClick={() =>
                     dispatch({
                       type: "SELECT_CLASSIFICATION",
@@ -911,7 +952,7 @@ export default function GamePage() {
                   label="VILSELEDANDE"
                   value="misleading"
                   selected={state.selectedClassification === "misleading"}
-                  disabled={state.phase === "feedback"}
+                  disabled={state.phase === "feedback" || isAnswered}
                   onClick={() =>
                     dispatch({
                       type: "SELECT_CLASSIFICATION",
@@ -938,6 +979,17 @@ export default function GamePage() {
           selectedClueIds={state.selectedClueIds}
           isLastCase={isLastCase}
           onNext={() => dispatch({ type: "NEXT_CASE" })}
+        />
+      )}
+
+      {showFacit && currentCaseResult && (
+        <FeedbackOverlay
+          result={currentCaseResult}
+          currentCase={currentCase}
+          selectedClueIds={currentCaseResult.selectedClueIds}
+          isLastCase={false}
+          isReview
+          onNext={() => setShowFacit(false)}
         />
       )}
 
