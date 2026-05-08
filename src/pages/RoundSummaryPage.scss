@@ -1,0 +1,194 @@
+@use "../styles/variables" as *;
+
+.round-summary {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  background: $color-bg;
+
+  &__card {
+    background: $color-card-bg;
+    border: 1px solid $color-card-border;
+    border-radius: $radius-lg;
+    padding: clamp(1.5rem, 5vw, 3rem);
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+
+  &__badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $color-success;
+    background: $color-success-bg;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 999px;
+    padding: 0.25rem 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    color: $color-text;
+    margin: 0 0 2rem;
+    line-height: 1.15;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__stat {
+    background: $color-bg-alt;
+    border: 1px solid $color-card-border;
+    border-radius: $radius;
+    padding: 0.9rem 1.25rem;
+    flex: 1;
+    min-width: 80px;
+
+    &-value {
+      display: block;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 800;
+      color: $color-primary;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    &-label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: $color-text-muted;
+    }
+  }
+
+  &__xp-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $color-primary-dim;
+    border: 1px solid rgba(201, 162, 39, 0.25);
+    border-radius: $radius;
+    padding: 0.6rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__xp-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $color-primary;
+  }
+
+  &__xp-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: $color-primary;
+  }
+
+  &__cases {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+  }
+
+  &__case {
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    background: $color-bg-alt;
+    border: 1px solid $color-card-border;
+    border-radius: $radius-sm;
+    padding: 0.6rem 0.85rem;
+
+    &--correct {
+      border-left: 3px solid $color-success;
+    }
+
+    &--wrong {
+      border-left: 3px solid $color-danger;
+    }
+
+    &-icon {
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    &--correct &-icon { color: $color-success; }
+    &--wrong &-icon { color: $color-danger; }
+
+    &-headline {
+      flex: 1;
+      font-size: 0.85rem;
+      color: $color-text;
+      line-height: 1.35;
+    }
+
+    &-score {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $color-text-muted;
+      flex-shrink: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__next-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: $color-primary;
+    color: $color-button-text;
+    border: none;
+    border-radius: $radius;
+    padding: 0.9rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    min-height: 52px;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $color-primary-hover;
+    }
+  }
+
+  &__dashboard-btn {
+    background: transparent;
+    color: $color-text-muted;
+    border: 1px solid $color-card-border;
+    border-radius: $radius;
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-height: 44px;
+    transition: color 0.15s, border-color 0.15s;
+
+    &:hover {
+      color: $color-text;
+      border-color: $color-text-muted;
+    }
+  }
+}

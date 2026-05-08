@@ -14,6 +14,7 @@ const DEFAULT_STATS: PlayerStats = {
   lastStreak: 0,
   totalScore: 0,
   badges: [],
+  totalCompletedRounds: 0,
 };
 
 function getRank(score: number): string {

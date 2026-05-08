@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\projekt\\\\fake-news-detective-hackathon2026\" -Exclude node_modules)",
+      "Bash(Select-Object -Property Name, FullName)"
+    ]
+  }
+}

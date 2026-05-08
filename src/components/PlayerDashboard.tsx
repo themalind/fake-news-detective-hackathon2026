@@ -1,4 +1,5 @@
 import { CASES } from "../data/cases";
+import { ROUNDS } from "../data/rounds";
 import type { PlayerStats } from "../types/game";
 import { load } from "../utils/storage";
 import "./PlayerDashboard.scss";
@@ -42,6 +43,10 @@ function getRankXpLabel(score: number) {
   return `${score} / ${rank.max + 1} erfarenhet`;
 }
 
+function getRoundSlots(level: number): number {
+  return level % ROUNDS.length;
+}
+
 const DEFAULT_STATS: PlayerStats = {
   totalGames: 5,
   totalCorrect: 3,
@@ -57,18 +62,23 @@ const DEFAULT_STATS: PlayerStats = {
     "skarpskytten",
     "veteranen",
   ],
+  totalCompletedRounds: 7,
 };
 
 export default function PlayerDashboard() {
   const saved = load("stats", DEFAULT_STATS) as PlayerStats;
-  const stats = saved.totalGames === 0 ? DEFAULT_STATS : saved;
+  const hasAnyProgress = saved.totalGames > 0 || (saved.totalCompletedRounds ?? 0) > 0;
+  const stats = hasAnyProgress ? saved : DEFAULT_STATS;
   const { rank } = getRank(stats.totalScore);
   const rankProgress = getRankProgress(stats.totalScore);
   const rankXpLabel = getRankXpLabel(stats.totalScore);
-  const hasPlayed = stats.totalGames > 0;
-  const accuracy = hasPlayed
-    ? Math.round((stats.totalCorrect / (stats.totalGames * CASES.length)) * 100)
+  const hasPlayed = stats.totalGames > 0 || (stats.totalCompletedRounds ?? 0) > 0;
+  const totalPlayed = stats.totalCorrect + stats.totalFooled;
+  const accuracy = totalPlayed > 0
+    ? Math.round((stats.totalCorrect / totalPlayed) * 100)
     : null;
+  const level = stats.totalCompletedRounds ?? 0;
+  const filledSlots = getRoundSlots(level);
 
   return (
     <div className="player-dashboard">
@@ -131,7 +141,13 @@ export default function PlayerDashboard() {
             <span className="player-dashboard__rank-score">{rankXpLabel}</span>
           </div>
         </div>
+      </div>
 
+      <div className="player-dashboard__level">
+        <div className="player-dashboard__level-left">
+          <span className="player-dashboard__level-label">Nivå</span>
+          <span className="player-dashboard__level-number">{level}</span>
+        </div>
         <div className="player-dashboard__key-stats">
           <div className="player-dashboard__stat">
             <div className="player-dashboard__stat-row">
@@ -189,7 +205,7 @@ export default function PlayerDashboard() {
                 className="player-dashboard__stat-icon"
               />
               <span className="player-dashboard__inv-value">
-                {stats.totalGames}
+                {stats.totalCompletedRounds ?? 0}
               </span>
             </div>
             <span className="player-dashboard__inv-label">Utredningar</span>
