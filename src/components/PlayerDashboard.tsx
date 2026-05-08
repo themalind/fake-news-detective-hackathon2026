@@ -15,7 +15,7 @@ const RANKS = [
 ];
 
 const BADGES = [
-  { id: "forsta-fallet", label: "Första fallet", image: "/images/StylingElements/fire1.png"},
+  { id: "forsta-fallet", label: "Första fallet", image: "/images/StylingElements/fire1.png" },
   { id: "streakjagaren", label: "Streakjägaren", image: "/images/StylingElements/lightning.png" },
   { id: "bevissamlaren", label: "Bevissamlaren", image: "/images/StylingElements/folder.png" },
   { id: "skarpskytten", label: "Skarpskytten", image: "/images/StylingElements/dartboard.png" },
@@ -49,14 +49,8 @@ const DEFAULT_STATS: PlayerStats = {
   bestStreak: 3,
   lastStreak: 2,
   totalScore: 450,
-  badges: [
-    "forsta-fallet",
-    "streakjagaren",
-    "bevissamlaren",
-    "skarpskytten",
-    "veteranen",
-  ],
-  totalCompletedRounds: 7,
+  badges: ["forsta-fallet", "streakjagaren", "bevissamlaren", "skarpskytten", "veteranen"],
+  totalCompletedRounds: 1,
 };
 
 export default function PlayerDashboard() {
@@ -68,42 +62,26 @@ export default function PlayerDashboard() {
   const rankXpLabel = getRankXpLabel(stats.totalScore);
   const hasPlayed = stats.totalGames > 0 || (stats.totalCompletedRounds ?? 0) > 0;
   const totalPlayed = stats.totalCorrect + stats.totalFooled;
-  const accuracy = totalPlayed > 0
-    ? Math.round((stats.totalCorrect / totalPlayed) * 100)
-    : null;
+  const accuracy = totalPlayed > 0 ? Math.round((stats.totalCorrect / totalPlayed) * 100) : null;
   const level = stats.totalCompletedRounds ?? 0;
 
   return (
     <div className="player-dashboard">
-      <span
-        className="player-dashboard__corner player-dashboard__corner--tl"
-        aria-hidden="true"
-      >
+      <span className="player-dashboard__corner player-dashboard__corner--tl" aria-hidden="true">
         ✦
       </span>
-      <span
-        className="player-dashboard__corner player-dashboard__corner--tr"
-        aria-hidden="true"
-      >
+      <span className="player-dashboard__corner player-dashboard__corner--tr" aria-hidden="true">
         ✦
       </span>
-      <span
-        className="player-dashboard__corner player-dashboard__corner--bl"
-        aria-hidden="true"
-      >
+      <span className="player-dashboard__corner player-dashboard__corner--bl" aria-hidden="true">
         ✦
       </span>
-      <span
-        className="player-dashboard__corner player-dashboard__corner--br"
-        aria-hidden="true"
-      >
+      <span className="player-dashboard__corner player-dashboard__corner--br" aria-hidden="true">
         ✦
       </span>
 
       <div className="player-dashboard__dossier">
-        <span className="player-dashboard__dossier-label">
-          Dossier · Detektiv
-        </span>
+        <span className="player-dashboard__dossier-label">Dossier · Detektiv</span>
         <span className="player-dashboard__dossier-rule" aria-hidden="true" />
       </div>
 
@@ -126,10 +104,7 @@ export default function PlayerDashboard() {
               aria-valuemin={0}
               aria-valuemax={100}
             >
-              <div
-                className="player-dashboard__rank-bar-fill"
-                style={{ width: `${rankProgress}%` }}
-              />
+              <div className="player-dashboard__rank-bar-fill" style={{ width: `${rankProgress}%` }} />
             </div>
             <span className="player-dashboard__rank-score">{rankXpLabel}</span>
           </div>
@@ -150,9 +125,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__stat-value">
-                {stats.lastStreak}
-              </span>
+              <span className="player-dashboard__stat-value">{stats.lastStreak}</span>
             </div>
             <span className="player-dashboard__stat-label">Streak</span>
           </div>
@@ -164,9 +137,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__stat-value">
-                {stats.bestStreak}
-              </span>
+              <span className="player-dashboard__stat-value">{stats.bestStreak}</span>
             </div>
             <span className="player-dashboard__stat-label">Rekord</span>
           </div>
@@ -178,9 +149,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__stat-value">
-                {accuracy !== null ? `${accuracy}%` : "–"}
-              </span>
+              <span className="player-dashboard__stat-value">{accuracy !== null ? `${accuracy}%` : "–"}</span>
             </div>
             <span className="player-dashboard__stat-label">Träffsäkerhet</span>
           </div>
@@ -197,9 +166,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__inv-value">
-                {stats.totalCompletedRounds ?? 0}
-              </span>
+              <span className="player-dashboard__inv-value">{stats.totalCompletedRounds ?? 0}</span>
             </div>
             <span className="player-dashboard__inv-label">Utredningar</span>
           </div>
@@ -211,9 +178,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__inv-value">
-                {stats.totalCorrect}
-              </span>
+              <span className="player-dashboard__inv-value">{stats.totalCorrect}</span>
             </div>
             <span className="player-dashboard__inv-label">Rätt bedömning</span>
           </div>
@@ -225,9 +190,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__inv-value">
-                {stats.totalFooled}
-              </span>
+              <span className="player-dashboard__inv-value">{stats.totalFooled}</span>
             </div>
             <span className="player-dashboard__inv-label">Lurad</span>
           </div>
@@ -239,9 +202,7 @@ export default function PlayerDashboard() {
                 aria-hidden="true"
                 className="player-dashboard__stat-icon"
               />
-              <span className="player-dashboard__inv-value">
-                {stats.totalEvidenceFound}
-              </span>
+              <span className="player-dashboard__inv-value">{stats.totalEvidenceFound}</span>
             </div>
             <span className="player-dashboard__inv-label">Bevis funna</span>
           </div>
@@ -260,27 +221,16 @@ export default function PlayerDashboard() {
                 title={earned ? badge.label : `${badge.label} (låst)`}
               >
                 <div className="player-dashboard__badge-seal">
-                  <img
-                    src={badge.image}
-                    alt=""
-                    aria-hidden="true"
-                    className="player-dashboard__badge-img"
-                  />
+                  <img src={badge.image} alt="" aria-hidden="true" className="player-dashboard__badge-img" />
                 </div>
-                <span className="player-dashboard__badge-label">
-                  {badge.label}
-                </span>
+                <span className="player-dashboard__badge-label">{badge.label}</span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {!hasPlayed && (
-        <p className="player-dashboard__new-player">
-          Redo för din första utredning, detektiv?
-        </p>
-      )}
+      {!hasPlayed && <p className="player-dashboard__new-player">Redo för din första utredning, detektiv?</p>}
     </div>
   );
 }

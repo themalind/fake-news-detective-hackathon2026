@@ -4,6 +4,7 @@ import { ROUNDS } from "../data/rounds";
 import type { PlayerStats } from "../types/game";
 import { load } from "../utils/storage";
 import { ArrowRight } from "lucide-react";
+import Confetti from "../components/Confetti";
 import "./RoundSummaryPage.scss";
 
 const DEFAULT_STATS: PlayerStats = {
@@ -58,6 +59,7 @@ export default function RoundSummaryPage() {
 
     return (
       <div className="round-summary">
+        <Confetti />
         <div className="round-summary__card round-summary__card--final">
           <span className="round-summary__badge">Alla rundor klara!</span>
           <h1 className="round-summary__rank">{getRank(state.score)}</h1>
@@ -159,6 +161,7 @@ export default function RoundSummaryPage() {
 
   return (
     <div className="round-summary">
+      {correctCount === roundResults.length && roundResults.length > 0 && <Confetti />}
       <div className="round-summary__card">
         <span className="round-summary__badge">
           Runda {round.number} klar
